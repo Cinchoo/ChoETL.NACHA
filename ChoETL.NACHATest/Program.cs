@@ -11,7 +11,12 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            Console.WriteLine(ChoFixedLengthWriter.ToText<ChoBatchHeaderRecord>(ChoActivator.CreateInstance<ChoBatchHeaderRecord>()));
+            //double c = 232.1034;
+            //Console.WriteLine(c.ToString("#.00").Replace(".", ""));
+            //return;
+            ChoFileControlRecord r = new ChoFileControlRecord();
+            r.Validate();
+            Console.WriteLine(ChoFixedLengthWriter.ToText<ChoFileControlRecord>(r).Length);
         }
     }
 }

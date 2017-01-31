@@ -59,6 +59,7 @@ namespace ChoETL.NACHA
         /// This helps identify multiple files created on the same date. A is the first file; B is the second, etc.
         /// </summary>
         [ChoFixedLengthRecordField(33, 1)]
+        [DefaultValue("A")]
         public char FileIDModifier { get; set; }
 
         /// <summary>
@@ -76,7 +77,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(37, 2)]
         [DefaultValue(10)]
-        public uint BlockingFactory { get; set; }
+        public uint BlockingFactor { get; set; }
 
         /// <summary>
         /// Currently there is only one code. Enter 1.

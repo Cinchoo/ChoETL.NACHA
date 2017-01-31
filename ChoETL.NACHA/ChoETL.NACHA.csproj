@@ -44,8 +44,12 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChoBatchControlRecord.cs" />
     <Compile Include="ChoBatchHeaderRecord.cs" />
+    <Compile Include="ChoAddendaRecord.cs" />
+    <Compile Include="ChoFileControlRecord.cs" />
     <Compile Include="ChoFileHeaderRecord.cs" />
+    <Compile Include="ChoEntryDetailRecord.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
