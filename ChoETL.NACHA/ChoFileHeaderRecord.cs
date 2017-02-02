@@ -18,7 +18,6 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.FileHeader)]
         [ChoFixedLengthRecordField(0, 1)]
-
         public ChoRecordTypeCode RecordTypeCode { get; private set; }
 
         /// <summary>
@@ -46,7 +45,7 @@ namespace ChoETL.NACHA
         [ChoFixedLengthRecordField(23, 6)]
         [ChoDefaultValue("() => DateTime.Today")]
         [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "yyMMdd")]
-        public DateTime FileCreationDate { get; set; }
+        public DateTime FileCreationDate { get; private set; }
 
         /// <summary>
         /// Time of day you created the input file.
@@ -54,7 +53,7 @@ namespace ChoETL.NACHA
         [ChoFixedLengthRecordField(29, 4)]
         [ChoDefaultValue("() => DateTime.Now")]
         [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "HHmm")]
-        public DateTime FileCreationTime { get; set; }
+        public DateTime FileCreationTime { get; private set; }
 
         /// <summary>
         /// This helps identify multiple files created on the same date. A is the first file; B is the second, etc.

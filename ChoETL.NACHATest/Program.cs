@@ -24,8 +24,8 @@ namespace ChoETL.NACHATest
             //    Console.WriteLine(r.ToStringEx());
             //}
 
-            foreach (var r in new ChoNACHAReader("ACH.txt"))
-                Console.WriteLine(r.ToStringEx());
+            foreach (var r in new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
+                Console.WriteLine(r.DumpAsJson());
         }
     }
 }

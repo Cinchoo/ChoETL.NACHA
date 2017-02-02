@@ -14,35 +14,46 @@ namespace ChoETL.NACHA
         private bool _closeStreamOnDispose = false;
         private Lazy<IEnumerator> _enumerator = null;
 
-        public ChoNACHAReader(string filePath, Encoding encoding = null, int bufferSize = 2048)
+        public ChoNACHAConfiguration Configuration
+        {
+            get;
+            private set;
+        }
+
+        public ChoNACHAReader(string filePath, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNullOrEmpty(filePath, "FilePath");
+            Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(ChoPath.GetFullPath(filePath), encoding == null ? Encoding.Default : encoding, false, bufferSize);
+            _streamReader = new StreamReader(ChoPath.GetFullPath(filePath), Configuration.Encoding, false, Configuration.BufferSize);
             _closeStreamOnDispose = true;
         }
 
-        public ChoNACHAReader(StreamReader streamReader)
+        public ChoNACHAReader(StreamReader streamReader, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNull(streamReader, "StreamReader");
+            Configuration = configuration;
             Init();
 
             _streamReader = streamReader;
         }
 
-        public ChoNACHAReader(Stream inStream, Encoding encoding = null, int bufferSize = 2048)
+        public ChoNACHAReader(Stream inStream, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNull(inStream, "Stream");
+            Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(inStream, encoding == null ? Encoding.Default : encoding, false, bufferSize);
+            _streamReader = new StreamReader(inStream, Configuration.Encoding, false, Configuration.BufferSize);
             _closeStreamOnDispose = true;
         }
 
         private void Init()
         {
             _enumerator = new Lazy<IEnumerator>(() => GetEnumerator());
+            if (Configuration == null)
+                Configuration = new ChoNACHAConfiguration();
         }
 
         public object Read()
@@ -53,6 +64,14 @@ namespace ChoETL.NACHA
                 return null;
         }
 
+        public static ChoNACHAReader LoadText(string inputText, ChoNACHAConfiguration configuration = null)
+        {
+            var r = new ChoNACHAReader(inputText.ToStream(), configuration);
+            r._closeStreamOnDispose = true;
+
+            return r;
+        }
+
         public void Dispose()
         {
             if (_closeStreamOnDispose)
@@ -61,18 +80,11 @@ namespace ChoETL.NACHA
 
         public IEnumerator GetEnumerator()
         {
-            ChoManifoldReader reader = new ChoManifoldReader(_streamReader).WithRecordSelector(0, 1, typeof(ChoBatchHeaderRecord), typeof(ChoBatchControlRecord),
+            ChoManifoldReader reader = new ChoManifoldReader(_streamReader, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoBatchHeaderRecord), typeof(ChoBatchControlRecord),
                typeof(ChoFileHeaderRecord), typeof(ChoFileControlRecord), typeof(ChoEntryDetailRecord), typeof(ChoAddendaRecord));
 
-            bool batchEnd = false;
             object state = null;
-            return ChoEnumeratorWrapper.BuildEnumerable<object>(() =>
-            {
-                state = reader.Read();
-                batchEnd = state is ChoBatchControlRecord;
-
-                return state != null && !batchEnd;
-            }, () => state).GetEnumerator();
+            return ChoEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
         }
     }
 }
