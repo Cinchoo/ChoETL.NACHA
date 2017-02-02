@@ -14,9 +14,15 @@ namespace ChoETL.NACHATest
             //double c = 232.1034;
             //Console.WriteLine(c.ToString("#.00").Replace(".", ""));
             //return;
-            ChoFileControlRecord r = new ChoFileControlRecord();
-            r.Validate();
-            Console.WriteLine(ChoFixedLengthWriter.ToText<ChoFileControlRecord>(r).Length);
+            //ChoFileControlRecord r = new ChoFileControlRecord();
+            //r.Validate();
+            //Console.WriteLine(ChoFixedLengthWriter.ToText<ChoFileControlRecord>(r).Length);
+
+            foreach (var r in new ChoManifoldReader("ACH.txt").WithRecordSelector(0, 1, typeof(ChoBatchHeaderRecord), typeof(ChoBatchControlRecord),
+                typeof(ChoFileHeaderRecord), typeof(ChoFileControlRecord), typeof(ChoEntryDetailRecord), typeof(ChoAddendaRecord)))
+            {
+                Console.WriteLine(r.ToStringEx());
+            }
         }
     }
 }

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.EntryDetail)]
     public class ChoEntryDetailRecord
     {
         /// <summary>
@@ -91,6 +92,7 @@ namespace ChoETL.NACHA
         /// The Bank will assign a trace number.
         /// </summary>
         [ChoFixedLengthRecordField(79, 15)]
-        public int TraceNumber { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Trace number must be > 0.")]
+        public ulong TraceNumber { get; set; }
     }
 }

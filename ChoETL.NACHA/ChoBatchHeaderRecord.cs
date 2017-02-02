@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.BatchHeader)]
     public class ChoBatchHeaderRecord
     {
         /// <summary>
@@ -102,7 +103,7 @@ namespace ChoETL.NACHA
         /// For example, put "1" if this is the first Batch Header Record in the file
         /// </summary>
         [ChoFixedLengthRecordField(87, 7)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Batch number must be > 0.")]
-        public int BatchNumber { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Batch number must be > 0.")]
+        public ulong BatchNumber { get; set; }
     }
 }

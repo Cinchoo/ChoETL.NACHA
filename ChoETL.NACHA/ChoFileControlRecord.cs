@@ -10,10 +10,11 @@ using System.ComponentModel.DataAnnotations;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.FileControl)]
     public partial class ChoFileControlRecord
     {
         /// <summary>
-        /// The code identifying the File Header Record is 1.
+        /// The code identifying the File Header Record is 9.
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.FileControl)]
         [ChoFixedLengthRecordField(0, 1)]
@@ -23,23 +24,23 @@ namespace ChoETL.NACHA
         /// This is the total number of ACH batches included in the file.
         /// </summary>
         [ChoFixedLengthRecordField(1, 6)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Batch count must be > 0.")]
-        public int BatchCount { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Batch count must be > 0.")]
+        public ulong BatchCount { get; set; }
 
         /// <summary>
         /// This is the total number of blocks included in the file.The block count x
         /// 10 = total number of records
         /// </summary>
         [ChoFixedLengthRecordField(7, 6)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Block count must be > 0.")]
-        public int BlockCount { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Block count must be > 0.")]
+        public ulong BlockCount { get; set; }
 
         /// <summary>
         /// The total of all Entry Detail and Addenda Records in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(13, 8)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
-        public int EntryAddendaCount { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
+        public ulong EntryAddendaCount { get; set; }
 
         /// <summary>
         /// This is the sum of all the RDFI routing numbers in each Entry Detail Record in the batch.
@@ -47,7 +48,7 @@ namespace ChoETL.NACHA
         /// Total of all positions 4-11 on each 6 record (Detail)
         /// </summary>
         [ChoFixedLengthRecordField(21, 10)]
-        public int EntryHash { get; set; }
+        public ulong EntryHash { get; set; }
 
         /// <summary>
         /// This is the total dollar amount of all debit entries contained in the batch.

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.BatchControl)]
     public class ChoBatchControlRecord
     {
         /// <summary>
@@ -31,8 +32,8 @@ namespace ChoETL.NACHA
         /// The total of all Entry Detail and Addenda Records in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(4, 6)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
-        public int EntryAddendaCount { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
+        public ulong EntryAddendaCount { get; set; }
 
         /// <summary>
         /// This is the sum of all the RDFI routing numbers in each Entry Detail Record in the batch.
@@ -40,7 +41,7 @@ namespace ChoETL.NACHA
         /// Total of all positions 4-11 on each 6 record (Detail)
         /// </summary>
         [ChoFixedLengthRecordField(10, 10)]
-        public int EntryHash { get; set; }
+        public long EntryHash { get; set; }
 
         /// <summary>
         /// This is the total dollar amount of all debit entries contained in the batch.
@@ -79,7 +80,7 @@ namespace ChoETL.NACHA
         public string OriginatingDFIID { get; set; }
 
         [ChoFixedLengthRecordField(87, 7)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Batch number must be > 0.")]
-        public int BatchNumber { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Batch number must be > 0.")]
+        public ulong BatchNumber { get; set; }
     }
 }

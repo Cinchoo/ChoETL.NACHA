@@ -10,6 +10,7 @@ using System.ComponentModel.DataAnnotations;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.FileHeader)]
     public partial class ChoFileHeaderRecord
     {
         /// <summary>
@@ -52,7 +53,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(29, 4)]
         [ChoDefaultValue("() => DateTime.Now")]
-        [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "hhmm")]
+        [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "HHmm")]
         public DateTime FileCreationTime { get; set; }
 
         /// <summary>
@@ -68,7 +69,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(34, 3)]
         [DefaultValue(94)]
-        public uint RecordSize { get; set; }
+        public uint RecordSize { get; private set; }
 
         /// <summary>
         /// This is the number of records that will be imported into the ACH system at one time.Please do not change.
@@ -77,6 +78,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(37, 2)]
         [DefaultValue(10)]
+        [Range(1, uint.MaxValue, ErrorMessage = "Blocking Factor must be > 0.")]
         public uint BlockingFactor { get; set; }
 
         /// <summary>
@@ -84,6 +86,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(39, 1)]
         [DefaultValue(1)]
+        [Range(1, 9, ErrorMessage = "Format Code must be 1-9.")]
         public uint FormatCode { get; set; }
 
         /// <summary>

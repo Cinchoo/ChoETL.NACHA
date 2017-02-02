@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
+    [ChoRecordTypeCode(ChoRecordTypeCode.Addenda)]
     public class ChoAddendaRecord
     {
         /// <summary>
@@ -27,7 +28,7 @@ namespace ChoETL.NACHA
         ///     99 – Used for Return Entries
         /// </summary>
         [ChoFixedLengthRecordField(1, 2)]
-        public int AddendaTypeCode { get; set; }
+        public uint AddendaTypeCode { get; set; }
 
         /// <summary>
         /// This is where you place the payment information, such as invoice number contract number, etc.
@@ -40,13 +41,14 @@ namespace ChoETL.NACHA
         /// The first number must be ‘0001’.
         /// </summary>
         [ChoFixedLengthRecordField(83, 4)]
-        [Range(1, Int32.MaxValue, ErrorMessage = "Addenda Sequence Number must be > 0.")]
-        public int AddendaSequenceNumber { get; set; }
+        [Range(1, int.MaxValue, ErrorMessage = "Addenda Sequence Number must be > 0.")]
+        public uint AddendaSequenceNumber { get; set; }
 
         /// <summary>
         /// The Bank will assign a trace number.
         /// </summary>
         [ChoFixedLengthRecordField(87, 7)]
-        public int EntryDetailSequenceNumber { get; set; }
+        [Range(1, ulong.MaxValue, ErrorMessage = "Entry Detail Sequence Number must be > 0.")]
+        public ulong EntryDetailSequenceNumber { get; set; }
     }
 }
