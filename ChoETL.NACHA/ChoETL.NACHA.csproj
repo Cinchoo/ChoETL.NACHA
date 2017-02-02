@@ -50,6 +50,7 @@
     <Compile Include="ChoFileControlRecord.cs" />
     <Compile Include="ChoFileHeaderRecord.cs" />
     <Compile Include="ChoEntryDetailRecord.cs" />
+    <Compile Include="ChoNACHAReader.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
