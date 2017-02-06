@@ -39,8 +39,7 @@ namespace ChoETL.NACHA
         /// Beware of numbers that do not begin with a 0, 1 or 2. Those are NOT routing numbers.
         /// </summary>
         [ChoFixedLengthRecordField(3, 8)]
-        [ChoCustomValidator("v => Char.IsDigit(v)", ErrorMessage = "ReceivingDFIID must be number.")]
-        public string ReceivingDFIID { get; set; }
+        public ulong ReceivingDFIID { get; set; }
 
         /// <summary>
         /// This is the last digit of the routing number.

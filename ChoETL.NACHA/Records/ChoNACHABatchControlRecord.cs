@@ -32,7 +32,7 @@ namespace ChoETL.NACHA
         /// The total of all Entry Detail and Addenda Records in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(4, 6)]
-        [Range(1, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
+        [Range(0, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be >= 0.")]
         public ulong EntryAddendaCount { get; set; }
 
         /// <summary>
@@ -41,7 +41,7 @@ namespace ChoETL.NACHA
         /// Total of all positions 4-11 on each 6 record (Detail)
         /// </summary>
         [ChoFixedLengthRecordField(10, 10)]
-        public long EntryHash { get; set; }
+        public ulong EntryHash { get; set; }
 
         /// <summary>
         /// This is the total dollar amount of all debit entries contained in the batch.

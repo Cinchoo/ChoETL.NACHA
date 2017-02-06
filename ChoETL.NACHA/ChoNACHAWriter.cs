@@ -75,19 +75,25 @@ namespace ChoETL.NACHA
                 throw new ObjectDisposedException(GetType().Name);
         }
 
-        public ChoNACHABatchWriter StartBatch()
-        {
-            CloseBatch();
-
-            //Increment batch count
-            _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject);
-            return _activeBatch;
-        }
-
-        public void CloseBatch()
+        public ChoNACHABatchWriter StartBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null, 
+            DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
+            string companyDiscretionaryData = null, char originatorStatusCode = '1')
         {
             if (_activeBatch != null)
                 _activeBatch.Close();
+
+            //Increment batch count
+            _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject, Configuration);
+            _activeBatch.ServiceClassCode = serviceClassCode;
+            _activeBatch.StandardEntryClassCode = standardEntryClassCode;
+            _activeBatch.CompanyEntryDescription = companyEntryDescription;
+            _activeBatch.CompanyDescriptiveDate = companyDescriptiveDate;
+            _activeBatch.EffectiveEntryDate = effectiveEntryDate;
+            _activeBatch.JulianSettlementDate = julianSettlementDate;
+            _activeBatch.CompanyDiscretionaryData = companyDiscretionaryData;
+            _activeBatch.OriginatorStatusCode = originatorStatusCode;
+
+            return _activeBatch;
         }
 
         public void Close()

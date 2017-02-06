@@ -6,20 +6,55 @@ using System.Threading.Tasks;
 
 namespace ChoETL.NACHA
 {
-    public class ChoNACHABatchWriter
+    public class ChoNACHABatchWriter : IDisposable
     {
         private readonly ChoManifoldWriter _writer;
         private readonly ChoNACHARunningStat _fileRunningStatObject;
         private readonly ChoNACHARunningStat _batchRunningStatObject;
         private bool _isClosed = false;
 
-        internal ChoNACHABatchWriter(ChoManifoldWriter writer, ChoNACHARunningStat fileRunningStatObject)
+        private readonly ChoNACHABatchHeaderRecord _NACHABatchHeaderRecord = ChoActivator.CreateInstance<ChoNACHABatchHeaderRecord>();
+        private readonly ChoNACHABatchControlRecord _NACHABatchControlRecord = ChoActivator.CreateInstance<ChoNACHABatchControlRecord>();
+        private readonly Lazy<bool> _batchHeaderWriter = null;
+        private ChoNACHAConfiguration _configuration = null;
+
+        public int ServiceClassCode { get; set; }
+        public string CompanyDiscretionaryData { get; set; }
+        public string StandardEntryClassCode { get; set; }
+        public string CompanyEntryDescription { get; set; }
+        public DateTime? CompanyDescriptiveDate { get; set; }
+        public DateTime? EffectiveEntryDate { get; set; }
+        public string JulianSettlementDate { get; set; }
+        public char OriginatorStatusCode { get; set; }
+
+        public string MessageAuthenticationCode { get; set; }
+
+        internal ChoNACHABatchWriter(ChoManifoldWriter writer, ChoNACHARunningStat fileRunningStatObject, ChoNACHAConfiguration configuration)
         {
+            _configuration = configuration;
             _writer = writer;
             _batchRunningStatObject = new ChoNACHARunningStat();
 
             _fileRunningStatObject = fileRunningStatObject;
-            _batchRunningStatObject.BatchNumber = _fileRunningStatObject.NewBatch();
+
+            _batchHeaderWriter = new Lazy<bool>(() =>
+            {
+                _NACHABatchHeaderRecord.BatchNumber = _fileRunningStatObject.NewBatch();
+                _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
+                _NACHABatchHeaderRecord.CompanyName = configuration.OriginatingCompanyName;
+                _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
+                _NACHABatchHeaderRecord.CompanyID = configuration.OriginatingCompanyId;
+                _NACHABatchHeaderRecord.StandardEntryClassCode = StandardEntryClassCode;
+                _NACHABatchHeaderRecord.CompanyEntryDescription = CompanyEntryDescription;
+                _NACHABatchHeaderRecord.CompanyDescriptiveDate = CompanyDescriptiveDate;
+                _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
+                _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
+                _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
+                _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
+
+                _writer.Write(_NACHABatchHeaderRecord);
+                return true;
+            });
         }
 
         public void Write(IEnumerable<ChoNACHAEntryDetailRecord> records, bool isDebit = false)
@@ -50,67 +85,34 @@ namespace ChoETL.NACHA
 
         private void CheckState()
         {
+            var r = _batchHeaderWriter.Value;
             if (_isClosed)
                 throw new ChoNACHAException("Batch is in closed state.");
         }
 
         public void Close()
         {
-            _fileRunningStatObject.IncRecordCountBy(_batchRunningStatObject.TotalNoOfRecord);
-            _fileRunningStatObject.IncAddendaRecordCountBy(_batchRunningStatObject.AddendaEntryCount);
-            _fileRunningStatObject.EntryHash += _batchRunningStatObject.EntryHash;
-            _fileRunningStatObject.TotalDebitEntryDollarAmount += _batchRunningStatObject.TotalDebitEntryDollarAmount;
-            _fileRunningStatObject.TotalCreditEntryDollarAmount += _batchRunningStatObject.TotalCreditEntryDollarAmount;
-        }
-    }
+            CheckState();
 
-    internal class ChoNACHARunningStat
-    {
-        public uint BatchNumber { get; set; }
-        public uint BatchCount { get; set; }
-        public uint TotalNoOfRecord { get; set; }
-        public uint AddendaEntryCount { get; set; }
-        public ulong EntryHash { get; set; }
-        public decimal TotalDebitEntryDollarAmount { get; set; }
-        public decimal TotalCreditEntryDollarAmount { get; set; }
+            var r = _batchHeaderWriter.Value;
+            _NACHABatchControlRecord.ServiceClassCode = _NACHABatchHeaderRecord.ServiceClassCode;
+            _NACHABatchControlRecord.EntryAddendaCount = _batchRunningStatObject.AddendaEntryCount;
+            _NACHABatchControlRecord.EntryHash = _batchRunningStatObject.EntryHash;
+            _NACHABatchControlRecord.TotalDebitEntryDollarAmount = _batchRunningStatObject.TotalDebitEntryDollarAmount;
+            _NACHABatchControlRecord.TotalCreditEntryDollarAmount = _batchRunningStatObject.TotalCreditEntryDollarAmount;
+            _NACHABatchControlRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchControlRecord.MessageAuthenticationCode = MessageAuthenticationCode;
+            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
+            _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
-        public ChoNACHARunningStat()
-        {
-            TotalNoOfRecord = 2;
+            _writer.Write(_NACHABatchControlRecord);
+            _fileRunningStatObject.UpdateStat(_batchRunningStatObject);
+            _isClosed = true;
         }
 
-        public uint NewBatch()
+        public void Dispose()
         {
-            BatchCount++;
-            return BatchNumber;
-        }
-
-        public void IncRecordCountBy(uint recCount = 1)
-        {
-            TotalNoOfRecord += recCount;
-        }
-
-        public void IncAddendaRecordCountBy(uint recCount = 1)
-        {
-            AddendaEntryCount += recCount;
-        }
-
-        public void UpdateStat(IEnumerable<ChoNACHAEntryDetailRecord> records, bool isDebit = false)
-        {
-            uint rc = (uint)records.Count();
-            IncRecordCountBy(rc);
-            EntryHash += (ulong)records.Sum(r => long.Parse(r.ReceivingDFIID));
-            if (isDebit)
-                TotalDebitEntryDollarAmount += records.Sum(r => r.Amount);
-            else
-                TotalCreditEntryDollarAmount += records.Sum(r => r.Amount);
-        }
-
-        public void UpdateStat(IEnumerable<ChoNACHAAddendaRecord> records)
-        {
-            uint rc = (uint)records.Count();
-            IncRecordCountBy(rc);
-            IncAddendaRecordCountBy(rc);
+            Close();
         }
     }
 }

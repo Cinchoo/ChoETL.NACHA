@@ -31,6 +31,7 @@ namespace ChoETL.NACHATest
 
             //foreach (var r in new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
             //    Console.WriteLine(r.ToStringEx());
+            //return;
 
             ChoNACHAConfiguration config = new ChoNACHAConfiguration();
             config.DestinationBankRoutingNumber = "123456789";
@@ -40,7 +41,12 @@ namespace ChoETL.NACHATest
             config.ReferenceCode = "Internal Use Only.";
             using (var w = new ChoNACHAWriter("ACH.txt", config))
             {
-
+                using (var b = w.StartBatch(200))
+                {
+                    using (var b1 = w.StartBatch(200))
+                    {
+                    }
+                }
             }
         }
 

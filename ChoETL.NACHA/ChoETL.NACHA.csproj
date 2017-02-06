@@ -9,8 +9,9 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ChoETL.NACHA</RootNamespace>
     <AssemblyName>ChoETL.NACHA</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -44,20 +45,21 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChoNACHABatchControlRecord.cs" />
-    <Compile Include="ChoNACHABatchHeaderRecord.cs" />
-    <Compile Include="ChoNACHAAddendaRecord.cs" />
-    <Compile Include="ChoNACHAFileControlRecord.cs" />
-    <Compile Include="ChoNACHAFileHeaderRecord.cs" />
-    <Compile Include="ChoNACHAEntryDetailRecord.cs" />
+    <Compile Include="Records\ChoNACHABatchControlRecord.cs" />
+    <Compile Include="Records\ChoNACHABatchHeaderRecord.cs" />
+    <Compile Include="Records\ChoNACHAAddendaRecord.cs" />
+    <Compile Include="Records\ChoNACHAFileControlRecord.cs" />
+    <Compile Include="Records\ChoNACHAFileHeaderRecord.cs" />
+    <Compile Include="Records\ChoNACHAEntryDetailRecord.cs" />
     <Compile Include="ChoNACHABatchWriter.cs" />
-    <Compile Include="ChoNACHAException.cs" />
+    <Compile Include="Exceptions\ChoNACHAException.cs" />
     <Compile Include="ChoNACHAReader.cs" />
     <Compile Include="ChoNACHAWriter.cs" />
-    <Compile Include="ChoNACHAConfiguration.cs" />
-    <Compile Include="ChoNACHAConfigurationException.cs" />
+    <Compile Include="Configuration\ChoNACHAConfiguration.cs" />
+    <Compile Include="Exceptions\ChoNACHAConfigurationException.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\ChoNACHARunningStat.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
