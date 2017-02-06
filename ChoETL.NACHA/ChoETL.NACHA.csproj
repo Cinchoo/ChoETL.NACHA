@@ -44,12 +44,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ChoBatchControlRecord.cs" />
-    <Compile Include="ChoBatchHeaderRecord.cs" />
-    <Compile Include="ChoAddendaRecord.cs" />
-    <Compile Include="ChoFileControlRecord.cs" />
-    <Compile Include="ChoFileHeaderRecord.cs" />
-    <Compile Include="ChoEntryDetailRecord.cs" />
+    <Compile Include="ChoNACHABatchControlRecord.cs" />
+    <Compile Include="ChoNACHABatchHeaderRecord.cs" />
+    <Compile Include="ChoNACHAAddendaRecord.cs" />
+    <Compile Include="ChoNACHAFileControlRecord.cs" />
+    <Compile Include="ChoNACHAFileHeaderRecord.cs" />
+    <Compile Include="ChoNACHAEntryDetailRecord.cs" />
+    <Compile Include="ChoNACHABatchWriter.cs" />
+    <Compile Include="ChoNACHAException.cs" />
     <Compile Include="ChoNACHAReader.cs" />
     <Compile Include="ChoNACHAWriter.cs" />
     <Compile Include="ChoNACHAConfiguration.cs" />

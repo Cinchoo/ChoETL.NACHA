@@ -10,7 +10,7 @@ namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
     [ChoRecordTypeCode(ChoRecordTypeCode.Addenda)]
-    public class ChoAddendaRecord
+    public class ChoNACHAAddendaRecord
     {
         /// <summary>
         /// The code identifying the File Header Record is 7.

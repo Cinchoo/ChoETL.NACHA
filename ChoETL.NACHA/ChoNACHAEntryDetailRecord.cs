@@ -10,7 +10,7 @@ namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
     [ChoRecordTypeCode(ChoRecordTypeCode.EntryDetail)]
-    public class ChoEntryDetailRecord
+    public class ChoNACHAEntryDetailRecord
     {
         /// <summary>
         /// The code identifying the File Header Record is 6.
@@ -39,13 +39,14 @@ namespace ChoETL.NACHA
         /// Beware of numbers that do not begin with a 0, 1 or 2. Those are NOT routing numbers.
         /// </summary>
         [ChoFixedLengthRecordField(3, 8)]
+        [ChoCustomValidator("v => Char.IsDigit(v)", ErrorMessage = "ReceivingDFIID must be number.")]
         public string ReceivingDFIID { get; set; }
 
         /// <summary>
         /// This is the last digit of the routing number.
         /// </summary>
         [ChoFixedLengthRecordField(11, 1)]
-        [ChoGenericValidator("v => Char.IsDigit(v)", ErrorMessage = "CheckDigit must be number.")]
+        [ChoCustomValidator("v => Char.IsDigit(v)", ErrorMessage = "CheckDigit must be number.")]
         public char CheckDigit { get; set; }
 
         /// <summary>
@@ -59,8 +60,8 @@ namespace ChoETL.NACHA
         /// The decimal point is implied, not hard coded.
         /// </summary>
         [ChoFixedLengthRecordField(29, 10)]
-        [ChoTypeConverter(typeof(ChoGenericConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
-        public double Amount { get; set; }
+        [ChoTypeConverter(typeof(ChoCustomConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
+        public decimal Amount { get; set; }
 
         /// <summary>
         /// This is the identification number you assign to your employee or customer.

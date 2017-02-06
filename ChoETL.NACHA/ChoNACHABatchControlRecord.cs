@@ -10,7 +10,7 @@ namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
     [ChoRecordTypeCode(ChoRecordTypeCode.BatchControl)]
-    public class ChoBatchControlRecord
+    public class ChoNACHABatchControlRecord
     {
         /// <summary>
         /// The code identifying the File Header Record is 8.

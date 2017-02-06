@@ -10,7 +10,7 @@ namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
     [ChoRecordTypeCode(ChoRecordTypeCode.BatchHeader)]
-    public class ChoBatchHeaderRecord
+    public class ChoNACHABatchHeaderRecord
     {
         /// <summary>
         /// The code identifying the File Header Record is 5.
@@ -55,6 +55,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(50, 3)]
         [DefaultValue("PPD")]
+        [ChoTypeConverter(typeof(ChoUpperCaseConverter))]
         public string StandardEntryClassCode { get; set; }
 
         /// <summary>
@@ -88,7 +89,7 @@ namespace ChoETL.NACHA
 
         [ChoFixedLengthRecordField(78, 1)]
         [DefaultValue('1')]
-        [ChoGenericValidator("v => v != '0' && Char.IsDigit(v)", ErrorMessage = "OriginatorStatusCode must be 1-9.")]
+        [ChoCustomValidator("v => v != '0' && Char.IsDigit(v)", ErrorMessage = "OriginatorStatusCode must be 1-9.")]
         public char OriginatorStatusCode { get; set; }
 
         /// <summary>

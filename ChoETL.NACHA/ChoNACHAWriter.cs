@@ -12,6 +12,10 @@ namespace ChoETL.NACHA
         private StreamWriter _streamWriter;
         private bool _closeStreamOnDispose = false;
         private ChoManifoldWriter _writer;
+        private bool _isDisposed = false;
+        private  ChoNACHABatchWriter _activeBatch = null;
+        private ChoNACHAFileControlRecord _fileControlRecord = null;
+        private ChoNACHARunningStat _runningStatObject = new ChoNACHARunningStat();
 
         public ChoNACHAConfiguration Configuration
         {
@@ -23,74 +27,130 @@ namespace ChoETL.NACHA
         {
             ChoGuard.ArgumentNotNullOrEmpty(filePath, "FilePath");
             Configuration = configuration;
-            Init();
+            if (Configuration == null)
+                Configuration = new ChoNACHAConfiguration();
 
             _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
+
+            Init();
         }
 
         public ChoNACHAWriter(StreamWriter streamWriter, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNull(streamWriter, "StreamWriter");
             Configuration = configuration;
-            Init();
+            if (Configuration == null)
+                Configuration = new ChoNACHAConfiguration();
             _streamWriter = streamWriter;
+
+            Init();
         }
 
         public ChoNACHAWriter(Stream inStream, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNull(inStream, "Stream");
             Configuration = configuration;
-            Init();
+            if (Configuration == null)
+                Configuration = new ChoNACHAConfiguration();
 
             _streamWriter = new StreamWriter(inStream, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
+
+            Init();
         }
 
         private void Init()
         {
-            if (Configuration == null)
-                Configuration = new ChoNACHAConfiguration();
+            _writer = new ChoManifoldWriter(_streamWriter, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
+               typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
 
-            _writer = new ChoManifoldWriter(_streamWriter, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoBatchHeaderRecord), typeof(ChoBatchControlRecord),
-               typeof(ChoFileHeaderRecord), typeof(ChoFileControlRecord), typeof(ChoEntryDetailRecord), typeof(ChoAddendaRecord));
+            WriteFileHeader();
+            _fileControlRecord = ChoActivator.CreateInstance<ChoNACHAFileControlRecord>();
         }
 
-        public void Write(IEnumerable<ChoEntryDetailRecord> records)
+        private void IsDisposed()
         {
-            _writer.Write(records);
+            if (_isDisposed)
+                throw new ObjectDisposedException(GetType().Name);
         }
 
-        public void Write(ChoEntryDetailRecord record)
+        public ChoNACHABatchWriter StartBatch()
         {
-            _writer.Write(record);
+            CloseBatch();
+
+            //Increment batch count
+            _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject);
+            return _activeBatch;
         }
 
-        public static string ToText(IEnumerable<ChoEntryDetailRecord> records, ChoNACHAConfiguration configuration = null)
+        public void CloseBatch()
         {
-            using (var stream = new MemoryStream())
-            using (var reader = new StreamReader(stream))
-            using (var writer = new StreamWriter(stream))
-            using (var parser = new ChoNACHAWriter(writer, configuration))
-            {
-                parser.Write(records);
-
-                writer.Flush();
-                stream.Position = 0;
-
-                return reader.ReadToEnd();
-            }
+            if (_activeBatch != null)
+                _activeBatch.Close();
         }
 
-        public static string ToText(ChoEntryDetailRecord record, ChoNACHAConfiguration configuration = null)
+        public void Close()
         {
-            return ToText(ChoEnumerable.AsEnumerable(record), configuration);
+            Dispose();
         }
+
+        private void WriteFileHeader()
+        {
+            ChoNACHAFileHeaderRecord header = ChoActivator.CreateInstance<ChoNACHAFileHeaderRecord>();
+            header.PriorityCode = Configuration.PriorityCode;
+            header.ImmediateDestination = Configuration.DestinationBankRoutingNumber;
+            header.ImmediateOrigin = Configuration.OriginatingCompanyId;
+            header.FileIDModifier = Configuration.FileIDModifier;
+            header.BlockingFactor = Configuration.BlockingFactor;
+            header.FormatCode = Configuration.FormatCode;
+            header.ImmediateDestinationName = Configuration.DestinationBankName;
+            header.ImmediateOriginName = Configuration.DestinationBankName;
+            header.ReferenceCode = Configuration.ReferenceCode;
+
+            _writer.Write(header);
+        }
+
+        private void WriteFileControl()
+        {
+            _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
+            _fileControlRecord.BlockCount = _runningStatObject.TotalNoOfRecord % Configuration.BlockingFactor;
+
+            _writer.Write(_fileControlRecord);
+        }
+
+        //public static string ToText(IEnumerable<ChoEntryDetailRecord> records, ChoNACHAConfiguration configuration = null)
+        //{
+        //    using (var stream = new MemoryStream())
+        //    using (var reader = new StreamReader(stream))
+        //    using (var writer = new StreamWriter(stream))
+        //    using (var parser = new ChoNACHAWriter(writer, configuration))
+        //    {
+        //        parser.Write(records);
+
+        //        writer.Flush();
+        //        stream.Position = 0;
+
+        //        return reader.ReadToEnd();
+        //    }
+        //}
+
+        //public static string ToText(ChoEntryDetailRecord record, ChoNACHAConfiguration configuration = null)
+        //{
+        //    return ToText(ChoEnumerable.AsEnumerable(record), configuration);
+        //}
 
         public void Dispose()
         {
+            if (_activeBatch != null)
+                _activeBatch.Close();
+
+            WriteFileControl();
+
             if (_closeStreamOnDispose)
                 _streamWriter.Dispose();
+
+            _isDisposed = true;
         }
     }
 }
