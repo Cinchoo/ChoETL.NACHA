@@ -89,7 +89,7 @@ namespace ChoETL.NACHA
 
         [ChoFixedLengthRecordField(78, 1)]
         [DefaultValue('1')]
-        [ChoCustomValidator(@"v => v[0] != '0' && System.Text.Regex.IsMatch(v, ""^[0-9]+$"", RegexOptions.Compiled)", ErrorMessage = "OriginatorStatusCode must be 1-9.", ParamType = typeof(string))]
+        [ChoCustomCodeValidator(@"v => v[0] != '0' && Regex.IsMatch(v, ""^[0-9]+$"", RegexOptions.Compiled)", ErrorMessage = "OriginatorStatusCode must be 1-9.", ParamType = typeof(string))]
         public char OriginatorStatusCode { get; set; }
 
         /// <summary>

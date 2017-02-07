@@ -43,9 +43,9 @@ namespace ChoETL.NACHATest
             {
                 using (var b = w.StartBatch(200))
                 {
-                    using (var b1 = w.StartBatch(200))
-                    {
-                    }
+                }
+                using (var b1 = w.StartBatch(200))
+                {
                 }
             }
         }

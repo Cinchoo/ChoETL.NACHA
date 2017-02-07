@@ -45,7 +45,7 @@ namespace ChoETL.NACHA
         /// This is the last digit of the routing number.
         /// </summary>
         [ChoFixedLengthRecordField(11, 1)]
-        [ChoCustomValidator("v => Char.IsDigit(v)", ErrorMessage = "CheckDigit must be number.")]
+        [ChoCustomExprValidator("v => Char.IsDigit(v)", ErrorMessage = "CheckDigit must be number.")]
         public char CheckDigit { get; set; }
 
         /// <summary>
@@ -59,7 +59,7 @@ namespace ChoETL.NACHA
         /// The decimal point is implied, not hard coded.
         /// </summary>
         [ChoFixedLengthRecordField(29, 10)]
-        [ChoTypeConverter(typeof(ChoCustomConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
+        [ChoTypeConverter(typeof(ChoCustomExprConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
         public decimal Amount { get; set; }
 
         /// <summary>

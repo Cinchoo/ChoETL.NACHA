@@ -79,8 +79,7 @@ namespace ChoETL.NACHA
             DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
             string companyDiscretionaryData = null, char originatorStatusCode = '1')
         {
-            if (_activeBatch != null)
-                _activeBatch.Close();
+            CloseCurrentBatch();
 
             //Increment batch count
             _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject, Configuration);
@@ -99,6 +98,12 @@ namespace ChoETL.NACHA
         public void Close()
         {
             Dispose();
+        }
+
+        private void CloseCurrentBatch()
+        {
+            if (_activeBatch != null && !_activeBatch.IsClosed())
+                _activeBatch.Close();
         }
 
         private void WriteFileHeader()
@@ -148,8 +153,7 @@ namespace ChoETL.NACHA
 
         public void Dispose()
         {
-            if (_activeBatch != null)
-                _activeBatch.Close();
+            CloseCurrentBatch();
 
             WriteFileControl();
 

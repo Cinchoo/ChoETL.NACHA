@@ -90,6 +90,11 @@ namespace ChoETL.NACHA
                 throw new ChoNACHAException("Batch is in closed state.");
         }
 
+        public bool IsClosed()
+        {
+            return _isClosed;
+        }
+
         public void Close()
         {
             CheckState();
