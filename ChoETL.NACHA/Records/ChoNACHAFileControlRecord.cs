@@ -54,12 +54,14 @@ namespace ChoETL.NACHA
         /// This is the total dollar amount of all debit entries contained in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(31, 12)]
+        [ChoTypeConverter(typeof(ChoCustomExprConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
         public decimal TotalDebitEntryDollarAmount { get; set; }
 
         /// <summary>
         /// This is the total dollar amount of all debit entries contained in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(43, 12)]
+        [ChoTypeConverter(typeof(ChoCustomExprConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
         public decimal TotalCreditEntryDollarAmount { get; set; }
 
         /// <summary>
