@@ -24,7 +24,7 @@ namespace ChoETL.NACHA
         /// This is the total number of ACH batches included in the file.
         /// </summary>
         [ChoFixedLengthRecordField(1, 6)]
-        [Range(1, ulong.MaxValue, ErrorMessage = "Batch count must be > 0.")]
+        [Range(0, ulong.MaxValue, ErrorMessage = "Batch count must be >= 0.")]
         public ulong BatchCount { get; set; }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace ChoETL.NACHA
         /// The total of all Entry Detail and Addenda Records in the batch.
         /// </summary>
         [ChoFixedLengthRecordField(13, 8)]
-        [Range(1, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be > 0.")]
+        [Range(0, ulong.MaxValue, ErrorMessage = "Entry/Addenda count must be >= 0.")]
         public ulong EntryAddendaCount { get; set; }
 
         /// <summary>

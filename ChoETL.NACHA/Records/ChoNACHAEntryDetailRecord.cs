@@ -45,7 +45,7 @@ namespace ChoETL.NACHA
         /// This is the last digit of the routing number.
         /// </summary>
         [ChoFixedLengthRecordField(11, 1)]
-        [ChoCustomExprValidator("v => Char.IsDigit(v)", ErrorMessage = "CheckDigit must be number.")]
+        [ChoCustomCodeValidator("v => Char.IsDigit(v[0])", ErrorMessage = "CheckDigit must be number.", ParamType = typeof(string))]
         public char CheckDigit { get; set; }
 
         /// <summary>

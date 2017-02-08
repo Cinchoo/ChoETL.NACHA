@@ -11,12 +11,13 @@ namespace ChoETL.NACHA
         private readonly ChoManifoldWriter _writer;
         private readonly ChoNACHARunningStat _fileRunningStatObject;
         private readonly ChoNACHARunningStat _batchRunningStatObject;
-        private bool _isClosed = false;
+        private bool _isDisposed = false;
 
         private readonly ChoNACHABatchHeaderRecord _NACHABatchHeaderRecord = ChoActivator.CreateInstance<ChoNACHABatchHeaderRecord>();
         private readonly ChoNACHABatchControlRecord _NACHABatchControlRecord = ChoActivator.CreateInstance<ChoNACHABatchControlRecord>();
-        private readonly Lazy<bool> _batchHeaderWriter = null;
         private ChoNACHAConfiguration _configuration = null;
+        private ChoNACHAEntryDetailWriter _activeEntry = null;
+        private readonly Lazy<bool> _batchHeaderWriter = null;
 
         public int ServiceClassCode { get; set; }
         public string CompanyDiscretionaryData { get; set; }
@@ -36,70 +37,75 @@ namespace ChoETL.NACHA
             _batchRunningStatObject = new ChoNACHARunningStat();
 
             _fileRunningStatObject = fileRunningStatObject;
-
             _batchHeaderWriter = new Lazy<bool>(() =>
             {
-                _NACHABatchHeaderRecord.BatchNumber = _fileRunningStatObject.NewBatch();
-                _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
-                _NACHABatchHeaderRecord.CompanyName = configuration.OriginatingCompanyName;
-                _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
-                _NACHABatchHeaderRecord.CompanyID = configuration.OriginatingCompanyId;
-                _NACHABatchHeaderRecord.StandardEntryClassCode = StandardEntryClassCode;
-                _NACHABatchHeaderRecord.CompanyEntryDescription = CompanyEntryDescription;
-                _NACHABatchHeaderRecord.CompanyDescriptiveDate = CompanyDescriptiveDate;
-                _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
-                _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
-                _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
-                _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
-
-                _writer.Write(_NACHABatchHeaderRecord);
+                WriteBatchHeader();
                 return true;
             });
         }
 
-        public void Write(IEnumerable<ChoNACHAEntryDetailRecord> records, bool isDebit = false)
+        public ChoNACHAEntryDetailWriter CreateEntryDetail(ulong traceNumber, int transactionCode, ulong RDFIRoutingNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null)
         {
-            CheckState();
+            CheckDisposed();
 
-            _writer.Write(records);
-            _batchRunningStatObject.UpdateStat(records, isDebit);
-        }
+            if (_activeEntry != null && !_activeEntry.IsClosed())
+                throw new ChoNACHAException("There is already open entry detail associated with this writer which must be closed first.");
 
-        public void Write(ChoNACHAEntryDetailRecord record, bool isDebit = false)
-        {
-            Write(ChoEnumerable.AsEnumerable(record));
-        }
+            var x = _batchHeaderWriter.Value;
 
-        public void Write(IEnumerable<ChoNACHAAddendaRecord> records)
-        {
-            CheckState();
+            //Increment batch count
+            string RDFIRoutingNumberText = RDFIRoutingNumber.ToString();
+            _activeEntry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
+            _activeEntry.TransactionCode = transactionCode;
+            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumberText.Substring(0, RDFIRoutingNumberText.Length - 1));
+            _activeEntry.CheckDigit = RDFIRoutingNumberText.Last();
+            _activeEntry.Amount = amount;
+            _activeEntry.IndividualIDNumber = individualIDNumber;
+            _activeEntry.IndividualName = individualName;
+            _activeEntry.DiscretionaryData = discretionaryData;
+            _activeEntry.TraceNumber = traceNumber;
 
-            _writer.Write(records);
-            _batchRunningStatObject.UpdateStat(records);
-        }
+            return _activeEntry;
 
-        public void Write(ChoNACHAAddendaRecord record)
-        {
-            Write(ChoEnumerable.AsEnumerable(record));
-        }
-
-        private void CheckState()
-        {
-            var r = _batchHeaderWriter.Value;
-            if (_isClosed)
-                throw new ChoNACHAException("Batch is in closed state.");
         }
 
         public bool IsClosed()
         {
-            return _isClosed;
+            return _isDisposed;
         }
 
-        public void Close()
+        private void CheckDisposed()
         {
-            CheckState();
+            if (_isDisposed)
+                throw new ObjectDisposedException(GetType().Name);
+        }
 
-            var r = _batchHeaderWriter.Value;
+        private void CloseCurrentEntry()
+        {
+            if (_activeEntry != null && !_activeEntry.IsClosed())
+                _activeEntry.Close();
+        }
+
+        private void WriteBatchHeader()
+        {
+            _NACHABatchHeaderRecord.BatchNumber = _fileRunningStatObject.NewBatch();
+            _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
+            _NACHABatchHeaderRecord.CompanyName = _configuration.OriginatingCompanyName;
+            _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
+            _NACHABatchHeaderRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchHeaderRecord.StandardEntryClassCode = StandardEntryClassCode;
+            _NACHABatchHeaderRecord.CompanyEntryDescription = CompanyEntryDescription;
+            _NACHABatchHeaderRecord.CompanyDescriptiveDate = CompanyDescriptiveDate;
+            _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
+            _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
+            _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
+            _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
+
+            _writer.Write(_NACHABatchHeaderRecord);
+        }
+
+        private void WriteBatchControl()
+        {
             _NACHABatchControlRecord.ServiceClassCode = _NACHABatchHeaderRecord.ServiceClassCode;
             _NACHABatchControlRecord.EntryAddendaCount = _batchRunningStatObject.AddendaEntryCount;
             _NACHABatchControlRecord.EntryHash = _batchRunningStatObject.EntryHash;
@@ -111,8 +117,22 @@ namespace ChoETL.NACHA
             _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
             _writer.Write(_NACHABatchControlRecord);
+        }
+
+        public void Close()
+        {
+            if (_isDisposed)
+                return;
+
+            var x = _batchHeaderWriter.Value;
+
+            CloseCurrentEntry();
+
+            WriteBatchControl();
+
             _fileRunningStatObject.UpdateStat(_batchRunningStatObject);
-            _isClosed = true;
+
+            _isDisposed = true;
         }
 
         public void Dispose()

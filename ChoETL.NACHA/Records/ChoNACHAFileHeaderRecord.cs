@@ -11,7 +11,7 @@ namespace ChoETL.NACHA
 {
     [ChoFixedLengthRecordObject(94)]
     [ChoRecordTypeCode(ChoRecordTypeCode.FileHeader)]
-    public partial class ChoNACHAFileHeaderRecord : IChoNotifyRecordWrite, IChoNotifyRecordRead
+    public partial class ChoNACHAFileHeaderRecord
     {
         /// <summary>
         /// The code identifying the File Header Record is 1.
@@ -31,12 +31,14 @@ namespace ChoETL.NACHA
         /// Bank routing number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(3,10)]
+        [ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateDestination value found.")]
         public string ImmediateDestination { get; set; }
 
         /// <summary>
         /// This is the ACH identification number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(13, 10)]
+        [ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateOrigin value found.")]
         public string ImmediateOrigin { get; set; }
 
         /// <summary>
@@ -105,104 +107,5 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(86, 8)]
         public string ReferenceCode { get; set; }
-
-        public bool BeginWrite(object source)
-        {
-            return true;
-        }
-
-        public void EndWrite(object source)
-        {
-        }
-
-        public bool BeforeRecordWrite(object target, int index, ref object source)
-        {
-            return true;
-        }
-
-        public bool AfterRecordWrite(object target, int index, object source)
-        {
-            return true;
-        }
-
-        public bool RecordWriteError(object target, int index, object source, Exception ex)
-        {
-            return true;
-        }
-
-        public bool BeforeRecordFieldWrite(object target, int index, string propName, ref object value)
-        {
-            IsValid(propName, value);
-            return true;
-        }
-
-        public bool AfterRecordFieldWrite(object target, int index, string propName, object value)
-        {
-            return true;
-        }
-
-        public bool RecordFieldWriteError(object target, int index, string propName, object value, Exception ex)
-        {
-            return true;
-        }
-
-        public bool BeginLoad(object source)
-        {
-            return true;
-        }
-
-        public void EndLoad(object source)
-        {
-        }
-
-        public bool BeforeRecordLoad(object target, int index, ref object source)
-        {
-            return true;
-        }
-
-        public bool AfterRecordLoad(object target, int index, object source)
-        {
-            return true;
-        }
-
-        public bool RecordLoadError(object target, int index, object source, Exception ex)
-        {
-            return true;
-        }
-
-        public bool BeforeRecordFieldLoad(object target, int index, string propName, ref object value)
-        {
-            IsValid(propName, value);
-
-            return true;
-        }
-
-        public bool AfterRecordFieldLoad(object target, int index, string propName, object value)
-        {
-            return true;
-        }
-
-        public bool RecordFieldLoadError(object target, int index, string propName, object value, Exception ex)
-        {
-            return true;
-        }
-
-        private static void IsValid(string propName, object value)
-        {
-            if (propName == "ImmediateDestination")
-            {
-                string v = value as string;
-                bool isValid = ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()));
-                if (!isValid)
-                    throw new ChoNACHAException("Invalid Immediate Destination value found.");
-            }
-            else if (propName == "ImmediateOrigin")
-            {
-                string v = value as string;
-                bool isValid = ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()));
-                if (!isValid)
-                    throw new ChoNACHAException("Invalid Immediate Origin value found.");
-            }
-        }
     }
 }

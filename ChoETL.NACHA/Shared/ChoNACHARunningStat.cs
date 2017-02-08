@@ -55,6 +55,8 @@ namespace ChoETL.NACHA
 
         public void UpdateStat(ChoNACHARunningStat src)
         {
+            if (this == src) return;
+
             IncRecordCountBy(src.TotalNoOfRecord);
             IncAddendaRecordCountBy(src.AddendaEntryCount);
             EntryHash += src.EntryHash;

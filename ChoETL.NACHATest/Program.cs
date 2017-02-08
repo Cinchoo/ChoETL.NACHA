@@ -1,6 +1,7 @@
 ﻿using ChoETL.NACHA;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -39,12 +40,30 @@ namespace ChoETL.NACHATest
             config.DestinationBankName = "PNC Bank";
             config.OriginatingCompanyName = "Microsoft Inc.";
             config.ReferenceCode = "Internal Use Only.";
+            //using (var stream = new MemoryStream())
+            //using (var reader = new StreamReader(stream))
+            //using (var writer = new StreamWriter(stream))
+            //using (var w = new ChoNACHAWriter(writer, config))
+            //{
+            //    using (var b = w.StartBatch(200))
+            //    {
+            //    }
+            //    using (var b1 = w.StartBatch(200))
+            //    {
+            //    }
+
+            //    writer.Flush();
+            //    stream.Position = 0;
+
+            //    Console.WriteLine(reader.ReadToEnd());
+            //}
             using (var w = new ChoNACHAWriter("ACH.txt", config))
             {
-                using (var b = w.StartBatch(200))
+                using (var b = w.CreateBatch(200))
                 {
+                    b.CreateEntryDetail(11, 20, 123456789, 22.505M, "ID Number", "ID Name", "Desc Data");
                 }
-                using (var b1 = w.StartBatch(200))
+                using (var b1 = w.CreateBatch(200))
                 {
                 }
             }

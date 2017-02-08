@@ -69,17 +69,14 @@ namespace ChoETL.NACHA
             _fileControlRecord = ChoActivator.CreateInstance<ChoNACHAFileControlRecord>();
         }
 
-        private void IsDisposed()
-        {
-            if (_isDisposed)
-                throw new ObjectDisposedException(GetType().Name);
-        }
-
-        public ChoNACHABatchWriter StartBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null, 
+        public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null, 
             DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
             string companyDiscretionaryData = null, char originatorStatusCode = '1')
         {
-            CloseCurrentBatch();
+            CheckDisposed();
+
+            if (_activeBatch != null && !_activeBatch.IsClosed())
+                throw new ChoNACHAException("There is already open batch associated with this writer which must be closed first.");
 
             //Increment batch count
             _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject, Configuration);
@@ -97,7 +94,23 @@ namespace ChoETL.NACHA
 
         public void Close()
         {
-            Dispose();
+            if (_isDisposed)
+                return;
+
+            CloseCurrentBatch();
+
+            WriteFileControl();
+
+            if (_closeStreamOnDispose)
+                _streamWriter.Dispose();
+
+            _isDisposed = true;
+        }
+
+        private void CheckDisposed()
+        {
+            if (_isDisposed)
+                throw new ObjectDisposedException(GetType().Name);
         }
 
         private void CloseCurrentBatch()
@@ -130,37 +143,9 @@ namespace ChoETL.NACHA
             _writer.Write(_fileControlRecord);
         }
 
-        //public static string ToText(IEnumerable<ChoEntryDetailRecord> records, ChoNACHAConfiguration configuration = null)
-        //{
-        //    using (var stream = new MemoryStream())
-        //    using (var reader = new StreamReader(stream))
-        //    using (var writer = new StreamWriter(stream))
-        //    using (var parser = new ChoNACHAWriter(writer, configuration))
-        //    {
-        //        parser.Write(records);
-
-        //        writer.Flush();
-        //        stream.Position = 0;
-
-        //        return reader.ReadToEnd();
-        //    }
-        //}
-
-        //public static string ToText(ChoEntryDetailRecord record, ChoNACHAConfiguration configuration = null)
-        //{
-        //    return ToText(ChoEnumerable.AsEnumerable(record), configuration);
-        //}
-
         public void Dispose()
         {
-            CloseCurrentBatch();
-
-            WriteFileControl();
-
-            if (_closeStreamOnDispose)
-                _streamWriter.Dispose();
-
-            _isDisposed = true;
+            Close();
         }
     }
 }

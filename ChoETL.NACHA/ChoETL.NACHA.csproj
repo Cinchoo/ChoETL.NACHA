@@ -45,6 +45,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ChoNACHAEntryDetailWriter.cs" />
     <Compile Include="Records\ChoNACHABatchControlRecord.cs" />
     <Compile Include="Records\ChoNACHABatchHeaderRecord.cs" />
     <Compile Include="Records\ChoNACHAAddendaRecord.cs" />
