@@ -12,7 +12,7 @@ To install Cinchoo PGP, run the following command in the Package Manager Console
 Add namespace to the program
 
 ``` csharp
-    using ChoETL.NACHA;
+using ChoETL.NACHA;
 ```
 # How to use
 
