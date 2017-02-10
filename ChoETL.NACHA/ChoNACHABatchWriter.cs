@@ -44,7 +44,18 @@ namespace ChoETL.NACHA
             });
         }
 
-        public ChoNACHAEntryDetailWriter CreateEntryDetail(ulong traceNumber, int transactionCode, ulong RDFIRoutingNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null)
+        public ChoNACHAEntryDetailWriter CreateDebitEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null)
+        {
+            return CreateEntryDetail(transactionCode, RDFIRoutingNumber, DFIAccountNumber, amount, individualIDNumber, individualName, discretionaryData, true);
+
+        }
+
+        public ChoNACHAEntryDetailWriter CreateCreditEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null)
+        {
+            return CreateEntryDetail(transactionCode, RDFIRoutingNumber, DFIAccountNumber, amount, individualIDNumber, individualName, discretionaryData, false);
+        }
+
+        private ChoNACHAEntryDetailWriter CreateEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null, bool isDebit = false)
         {
             CheckDisposed();
 
@@ -54,16 +65,18 @@ namespace ChoETL.NACHA
             var x = _batchHeaderWriter.Value;
 
             //Increment batch count
-            string RDFIRoutingNumberText = RDFIRoutingNumber.ToString();
             _activeEntry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
             _activeEntry.TransactionCode = transactionCode;
-            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumberText.Substring(0, RDFIRoutingNumberText.Length - 1));
-            _activeEntry.CheckDigit = RDFIRoutingNumberText.Last();
+            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.First(8));
+            _activeEntry.CheckDigit = RDFIRoutingNumber.Last();
+            _activeEntry.DFIAccountNumber = DFIAccountNumber;
             _activeEntry.Amount = amount;
             _activeEntry.IndividualIDNumber = individualIDNumber;
             _activeEntry.IndividualName = individualName;
             _activeEntry.DiscretionaryData = discretionaryData;
-            _activeEntry.TraceNumber = traceNumber;
+            uint tn = ++_fileRunningStatObject.TraceNumber;
+            _activeEntry.TraceNumber = ulong.Parse(_configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(8, '0'));
+            _activeEntry.IsDebit = isDebit;
 
             return _activeEntry;
 
@@ -99,7 +112,7 @@ namespace ChoETL.NACHA
             _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
             _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
             _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
-            _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
+            _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
 
             _writer.Write(_NACHABatchHeaderRecord);
         }
@@ -113,7 +126,7 @@ namespace ChoETL.NACHA
             _NACHABatchControlRecord.TotalCreditEntryDollarAmount = _batchRunningStatObject.TotalCreditEntryDollarAmount;
             _NACHABatchControlRecord.CompanyID = _configuration.OriginatingCompanyId;
             _NACHABatchControlRecord.MessageAuthenticationCode = MessageAuthenticationCode;
-            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.Substring(0, _configuration.DestinationBankRoutingNumber.Length - 1);
+            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
             _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
             _writer.Write(_NACHABatchControlRecord);

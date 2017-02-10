@@ -70,7 +70,7 @@ namespace ChoETL.NACHA
             if (DestinationBankRoutingNumber.IsNullOrWhiteSpace())
                 throw new ChoNACHAConfigurationException("Destination Bank Routing Number must be not empty.");
             string v = DestinationBankRoutingNumber;
-            if (!(((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()))))
+            if (!(((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) /*|| (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any())*/)))
             {
                 throw new ChoNACHAConfigurationException("Invalid Destination Bank Routing Number specified.");
             }

@@ -8,6 +8,7 @@ namespace ChoETL.NACHA
 {
     internal class ChoNACHARunningStat
     {
+        public uint TraceNumber { get; set; }
         public uint BatchCount { get; set; }
         public uint TotalNoOfRecord { get; set; }
         public uint AddendaEntryCount { get; set; }
@@ -35,22 +36,20 @@ namespace ChoETL.NACHA
             AddendaEntryCount += recCount;
         }
 
-        public void UpdateStat(IEnumerable<ChoNACHAEntryDetailRecord> records, bool isDebit = false)
+        public void UpdateStat(ChoNACHAEntryDetailRecord record, bool isDebit = false)
         {
-            uint rc = (uint)records.Count();
-            IncRecordCountBy(rc);
-            EntryHash += (ulong)records.Sum(r => (long)r.ReceivingDFIID);
+            IncRecordCountBy(1);
+            EntryHash += record.ReceivingDFIID;
             if (isDebit)
-                TotalDebitEntryDollarAmount += records.Sum(r => r.Amount);
+                TotalDebitEntryDollarAmount += record.Amount;
             else
-                TotalCreditEntryDollarAmount += records.Sum(r => r.Amount);
+                TotalCreditEntryDollarAmount += record.Amount;
         }
 
-        public void UpdateStat(IEnumerable<ChoNACHAAddendaRecord> records)
+        public void UpdateStat(ChoNACHAAddendaRecord record)
         {
-            uint rc = (uint)records.Count();
-            IncRecordCountBy(rc);
-            IncAddendaRecordCountBy(rc);
+            IncRecordCountBy(1);
+            IncAddendaRecordCountBy(1);
         }
 
         public void UpdateStat(ChoNACHARunningStat src)
