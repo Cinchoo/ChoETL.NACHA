@@ -32,6 +32,7 @@ config.OriginatingCompanyId = "123456789";
 config.DestinationBankName = "PNC Bank";
 config.OriginatingCompanyName = "Microsoft Inc.";
 config.ReferenceCode = "Internal Use Only.";
+config.BlockCount = 10;
 using (var nachaWriter = new ChoNACHAWriter("ACH.txt", config))
 {
 	using (var bw1 = nachaWriter.CreateBatch(200))
