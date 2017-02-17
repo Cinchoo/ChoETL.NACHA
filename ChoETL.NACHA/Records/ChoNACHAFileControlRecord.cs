@@ -32,7 +32,6 @@ namespace ChoETL.NACHA
         /// 10 = total number of records
         /// </summary>
         [ChoFixedLengthRecordField(7, 6)]
-        [Range(1, ulong.MaxValue, ErrorMessage = "Block count must be > 0.")]
         public ulong BlockCount { get; set; }
 
         /// <summary>

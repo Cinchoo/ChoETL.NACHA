@@ -79,7 +79,6 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(37, 2)]
         [DefaultValue(10)]
-        [Range(1, uint.MaxValue, ErrorMessage = "Blocking Factor must be > 0.")]
         public uint BlockingFactor { get; set; }
 
         /// <summary>

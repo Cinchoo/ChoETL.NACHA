@@ -84,7 +84,57 @@ namespace ChoETL.NACHA
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
 
             object state = null;
-            return ChoEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
+            return ChoNACHAEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
+        }
+
+        public class ChoNACHAEnumeratorWrapper
+        {
+            public static IEnumerable<T> BuildEnumerable<T>(
+                    Func<bool> moveNext, Func<T> current)
+            {
+                var po = new ChoEnumeratorWrapperInternal<T>(moveNext, current);
+                foreach (var s in po)
+                    yield return s;
+            }
+
+            private class ChoEnumeratorWrapperInternal<T>
+            {
+                private readonly Func<bool> _moveNext;
+                private readonly Func<T> _current;
+                private bool _isFileControlRecordFound = false;
+
+                public ChoEnumeratorWrapperInternal(Func<bool> moveNext, Func<T> current)
+                {
+                    ChoGuard.ArgumentNotNull(moveNext, "MoveNext");
+                    ChoGuard.ArgumentNotNull(current, "Current");
+
+                    _moveNext = moveNext;
+                    _current = current;
+                }
+
+                public ChoEnumeratorWrapperInternal<T> GetEnumerator()
+                {
+                    return this;
+                }
+
+                public bool MoveNext()
+                {
+                    if (_isFileControlRecordFound)
+                        return false;
+                    else
+                        return _moveNext();
+                }
+
+                public T Current
+                {
+                    get
+                    {
+                        var ret = _current();
+                        _isFileControlRecordFound = ret is ChoNACHAFileControlRecord;
+                        return ret;
+                    }
+                }
+            }
         }
     }
 }

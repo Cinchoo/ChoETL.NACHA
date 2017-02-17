@@ -100,6 +100,7 @@ namespace ChoETL.NACHA
             CloseCurrentBatch();
 
             WriteFileControl();
+            WriteFileControlFillerRecords();
 
             if (_closeStreamOnDispose)
                 _streamWriter.Dispose();
@@ -138,13 +139,36 @@ namespace ChoETL.NACHA
         private void WriteFileControl()
         {
             _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
-            _fileControlRecord.BlockCount = _runningStatObject.TotalNoOfRecord % Configuration.BlockingFactor;
+            if (Configuration.BlockingFactor > 0)
+                _fileControlRecord.BlockCount = (ulong)(_runningStatObject.TotalNoOfRecord / (double)Configuration.BlockingFactor + 0.5);
             _fileControlRecord.EntryAddendaCount = _runningStatObject.AddendaEntryCount;
             _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
             _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
             _fileControlRecord.TotalCreditEntryDollarAmount = _runningStatObject.TotalCreditEntryDollarAmount;
 
             _writer.Write(_fileControlRecord);
+        }
+
+        private void WriteFileControlFillerRecords()
+        {
+            if (Configuration.BlockingFactor <= 0)
+                return;
+
+            uint remain = Configuration.BlockingFactor - _runningStatObject.TotalNoOfRecord % Configuration.BlockingFactor;
+            if (remain <= 0)
+                return;
+
+            ChoNACHAFileControlRecord NACHAFileControlFillerRecord = ChoActivator.CreateInstance<ChoNACHAFileControlRecord>();
+            NACHAFileControlFillerRecord.BatchCount = 999999;
+            NACHAFileControlFillerRecord.BlockCount = 999999;
+            NACHAFileControlFillerRecord.EntryAddendaCount = 99999999;
+            NACHAFileControlFillerRecord.EntryHash = 9999999999;
+            NACHAFileControlFillerRecord.TotalDebitEntryDollarAmount = 999999999999;
+            NACHAFileControlFillerRecord.TotalCreditEntryDollarAmount = 999999999999;
+            NACHAFileControlFillerRecord.Reserved = ChoString.Repeat("9", 39);
+
+            for (int i = 0; i < remain; i++)
+                _writer.Write(NACHAFileControlFillerRecord);
         }
 
         public void Dispose()
