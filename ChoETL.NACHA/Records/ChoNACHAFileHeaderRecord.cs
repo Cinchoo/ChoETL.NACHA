@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ChoETL.NACHA
 {
-    [ChoFixedLengthRecordObject(94)]
+    [ChoFixedLengthRecordObject(94, ObjectValidationMode = ChoObjectValidationMode.ObjectLevel)]
     [ChoRecordTypeCode(ChoRecordTypeCode.FileHeader)]
     public partial class ChoNACHAFileHeaderRecord
     {
@@ -18,7 +18,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.FileHeader)]
         [ChoFixedLengthRecordField(0, 1)]
-        public ChoRecordTypeCode RecordTypeCode { get; private set; }
+        public ChoRecordTypeCode RecordTypeCode { get; set; }
 
         /// <summary>
         /// The Lower the number, the higher processing priority. Currently, only 01 is used.
@@ -47,7 +47,7 @@ namespace ChoETL.NACHA
         [ChoFixedLengthRecordField(23, 6)]
         [ChoDefaultValue("() => DateTime.Today")]
         [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "yyMMdd")]
-        public DateTime FileCreationDate { get; private set; }
+        public DateTime FileCreationDate { get; set; }
 
         /// <summary>
         /// Time of day you created the input file.
@@ -55,7 +55,7 @@ namespace ChoETL.NACHA
         [ChoFixedLengthRecordField(29, 4)]
         [ChoDefaultValue("() => DateTime.Now")]
         [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "HHmm")]
-        public DateTime FileCreationTime { get; private set; }
+        public DateTime FileCreationTime { get; set; }
 
         /// <summary>
         /// This helps identify multiple files created on the same date. A is the first file; B is the second, etc.
@@ -70,7 +70,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(34, 3)]
         [DefaultValue(94)]
-        public uint RecordSize { get; private set; }
+        public uint RecordSize { get; set; }
 
         /// <summary>
         /// This is the number of records that will be imported into the ACH system at one time.Please do not change.

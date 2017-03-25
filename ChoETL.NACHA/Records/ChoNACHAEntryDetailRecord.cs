@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChoETL.NACHA
 {
-    [ChoFixedLengthRecordObject(94)]
+    [ChoFixedLengthRecordObject(94, ObjectValidationMode = ChoObjectValidationMode.ObjectLevel)]
     [ChoRecordTypeCode(ChoRecordTypeCode.EntryDetail)]
     public class ChoNACHAEntryDetailRecord
     {
@@ -17,7 +17,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.EntryDetail)]
         [ChoFixedLengthRecordField(0, 1)]
-        public ChoRecordTypeCode RecordTypeCode { get; private set; }
+        public ChoRecordTypeCode RecordTypeCode { get; set; }
 
         /// <summary>
         /// Choose the appropriate Transaction

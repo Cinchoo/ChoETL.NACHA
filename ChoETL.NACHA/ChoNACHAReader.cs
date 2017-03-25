@@ -26,7 +26,7 @@ namespace ChoETL.NACHA
             Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(ChoPath.GetFullPath(filePath), Configuration.Encoding, false, Configuration.BufferSize);
+            _streamReader = new StreamReader(ChoPath.GetFullPath(filePath), Configuration.GetEncoding(filePath), false, Configuration.BufferSize);
             _closeStreamOnDispose = true;
         }
 
@@ -45,7 +45,7 @@ namespace ChoETL.NACHA
             Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(inStream, Configuration.Encoding, false, Configuration.BufferSize);
+            _streamReader = new StreamReader(inStream, Configuration.GetEncoding(inStream), false, Configuration.BufferSize);
             _closeStreamOnDispose = true;
         }
 
@@ -83,6 +83,7 @@ namespace ChoETL.NACHA
             ChoManifoldReader reader = new ChoManifoldReader(_streamReader, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
 
+            reader.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
             object state = null;
             return ChoNACHAEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
         }

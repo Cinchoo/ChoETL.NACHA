@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChoETL.NACHA
 {
-    [ChoFixedLengthRecordObject(94)]
+    [ChoFixedLengthRecordObject(94, ObjectValidationMode = ChoObjectValidationMode.ObjectLevel)]
     [ChoRecordTypeCode(ChoRecordTypeCode.Addenda)]
     public class ChoNACHAAddendaRecord
     {
@@ -17,7 +17,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.Addenda)]
         [ChoFixedLengthRecordField(0, 1)]
-        public ChoRecordTypeCode RecordTypeCode { get; private set; }
+        public ChoRecordTypeCode RecordTypeCode { get; set; }
 
         /// <summary>
         /// Two digit code identifying the type of information contained in the addenda record:

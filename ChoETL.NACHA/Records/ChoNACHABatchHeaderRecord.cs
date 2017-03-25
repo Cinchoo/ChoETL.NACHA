@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 
 namespace ChoETL.NACHA
 {
-    [ChoFixedLengthRecordObject(94)]
+    [ChoFixedLengthRecordObject(94, ObjectValidationMode = ChoObjectValidationMode.ObjectLevel)]
     [ChoRecordTypeCode(ChoRecordTypeCode.BatchHeader)]
     public class ChoNACHABatchHeaderRecord
     {
@@ -17,7 +17,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.BatchHeader)]
         [ChoFixedLengthRecordField(0, 1)]
-        public ChoRecordTypeCode RecordTypeCode { get; private set; }
+        public ChoRecordTypeCode RecordTypeCode { get; set; }
 
         /// <summary>
         /// Identifies the type of entries in the batch

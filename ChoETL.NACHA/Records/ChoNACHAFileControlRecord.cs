@@ -9,7 +9,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace ChoETL.NACHA
 {
-    [ChoFixedLengthRecordObject(94)]
+    [ChoFixedLengthRecordObject(94, ObjectValidationMode = ChoObjectValidationMode.ObjectLevel)]
     [ChoRecordTypeCode(ChoRecordTypeCode.FileControl)]
     public partial class ChoNACHAFileControlRecord
     {
@@ -18,7 +18,7 @@ namespace ChoETL.NACHA
         /// </summary>
         [DefaultValue(ChoRecordTypeCode.FileControl)]
         [ChoFixedLengthRecordField(0, 1)]
-        public ChoRecordTypeCode RecordTypeCode { get; private set; }
+        public ChoRecordTypeCode RecordTypeCode { get; set; }
 
         /// <summary>
         /// This is the total number of ACH batches included in the file.
