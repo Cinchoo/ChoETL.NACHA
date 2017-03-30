@@ -12,7 +12,7 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            ReadACHFile();
+            WriteACHFile();
         }
 
         static void ReadACHFile()
@@ -44,10 +44,26 @@ namespace ChoETL.NACHATest
                     {
 
                     }
+                    using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    {
+                        entry1.CreateAddendaRecord("Monthly bill");
+                    }
+                    using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    {
+
+                    }
+                    using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    {
+                        entry1.CreateAddendaRecord("Monthly bill");
+                    }
+                    using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    {
+
+                    }
                 }
-                using (var bw2 = nachaWriter.CreateBatch(200))
-                {
-                }
+                //using (var bw2 = nachaWriter.CreateBatch(200))
+                //{
+                //}
             }
         }
     }

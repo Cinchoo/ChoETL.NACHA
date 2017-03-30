@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoETL.NACHA", "ChoETL.NACHA\ChoETL.NACHA.csproj", "{8BDB0366-75FD-452F-9AF0-E3ED320575B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoETL.NACHATest", "ChoETL.NACHATest\ChoETL.NACHATest.csproj", "{E5F7D6E2-B0CE-4DAE-A8F1-9F0B37EB9FE1}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Lib", "Lib", "{4ADB5C7C-CC98-4A39-9E8F-6ECF59A97AD4}"
+	ProjectSection(SolutionItems) = preProject
+		Lib\ChoETL.dll = Lib\ChoETL.dll
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

@@ -50,7 +50,7 @@ namespace ChoETL.NACHA
 
             var x = _entryDetailWriter.Value;
 
-            ChoNACHAAddendaRecord addendaRecord = new ChoNACHAAddendaRecord();
+            ChoNACHAAddendaRecord addendaRecord = ChoActivator.CreateInstance<ChoNACHAAddendaRecord>();
             addendaRecord.AddendaTypeCode = addendaTypeCode;
             addendaRecord.PaymentRelatedInformation = paymentRelatedInformation;
             addendaRecord.AddendaSequenceNumber = ++_addendaSeqNo;

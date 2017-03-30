@@ -131,7 +131,7 @@ namespace ChoETL.NACHA
             header.BlockingFactor = Configuration.BlockingFactor;
             header.FormatCode = Configuration.FormatCode;
             header.ImmediateDestinationName = Configuration.DestinationBankName;
-            header.ImmediateOriginName = Configuration.DestinationBankName;
+            header.ImmediateOriginName = Configuration.OriginatingCompanyName;
             header.ReferenceCode = Configuration.ReferenceCode;
 
             _writer.Write(header);

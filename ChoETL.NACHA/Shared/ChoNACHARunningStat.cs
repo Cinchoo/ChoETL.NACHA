@@ -39,6 +39,7 @@ namespace ChoETL.NACHA
         public void UpdateStat(ChoNACHAEntryDetailRecord record, bool isDebit = false)
         {
             IncRecordCountBy(1);
+            IncAddendaRecordCountBy(1);
             EntryHash += record.ReceivingDFIID;
             if (isDebit)
                 TotalDebitEntryDollarAmount += record.Amount;
