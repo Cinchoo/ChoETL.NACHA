@@ -141,7 +141,7 @@ namespace ChoETL.NACHA
         {
             _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
             if (Configuration.BlockingFactor > 0)
-                _fileControlRecord.BlockCount = (ulong)(_runningStatObject.TotalNoOfRecord / (double)Configuration.BlockingFactor + 0.5);
+                _fileControlRecord.BlockCount = (ulong)(Math.Ceiling(_runningStatObject.TotalNoOfRecord / (Configuration.BlockingFactor * 1.0)));
             _fileControlRecord.EntryAddendaCount = _runningStatObject.AddendaEntryCount;
             _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
             _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
