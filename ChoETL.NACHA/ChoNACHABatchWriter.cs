@@ -44,9 +44,9 @@ namespace ChoETL.NACHA
             });
         }
 
-        public ChoNACHAEntryDetailWriter CreateDebitEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null)
+        public ChoNACHAEntryDetailWriter CreateDebitEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null, string paymentTypeCode = null)
         {
-            return CreateEntryDetail(transactionCode, RDFIRoutingNumber, DFIAccountNumber, amount, individualIDNumber, individualName, discretionaryData, true);
+            return CreateEntryDetail(transactionCode, RDFIRoutingNumber, DFIAccountNumber, amount, individualIDNumber, individualName, discretionaryData, true, paymentTypeCode);
 
         }
 
@@ -55,7 +55,7 @@ namespace ChoETL.NACHA
             return CreateEntryDetail(transactionCode, RDFIRoutingNumber, DFIAccountNumber, amount, individualIDNumber, individualName, discretionaryData, false);
         }
 
-        private ChoNACHAEntryDetailWriter CreateEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null, bool isDebit = false)
+        private ChoNACHAEntryDetailWriter CreateEntryDetail(int transactionCode, string RDFIRoutingNumber, string DFIAccountNumber, decimal amount, string individualIDNumber, string individualName, string discretionaryData = null, bool isDebit = false, string paymentTypeCode = null)
         {
             CheckDisposed();
 
@@ -74,8 +74,10 @@ namespace ChoETL.NACHA
             _activeEntry.IndividualIDNumber = individualIDNumber;
             _activeEntry.IndividualName = individualName;
             _activeEntry.DiscretionaryData = discretionaryData;
+            if (!String.IsNullOrEmpty(paymentTypeCode))
+                _activeEntry.PaymentTypeCode = paymentTypeCode;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            _activeEntry.TraceNumber = ulong.Parse(_configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(8, '0'));
+            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(7, '0');
             _activeEntry.IsDebit = isDebit;
 
             return _activeEntry;
