@@ -96,5 +96,6 @@ namespace ChoETL.NACHA
 
         [ChoFixedLengthRecordField(77, 1,FieldValueJustification = ChoFieldValueJustification.Right)]
         public string PaymentTypeCode { get; set; }
+
     }
 }
