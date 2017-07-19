@@ -94,7 +94,7 @@ namespace ChoETL.NACHA
         [ChoFixedLengthRecordField(79, 14)]
         public string TraceNumber { get; set; }
 
-        [ChoFixedLengthRecordField(77, 1, FieldValueJustification = ChoFieldValueJustification.Right)]
+        [ChoFixedLengthRecordField(77, 1,FieldValueJustification = ChoFieldValueJustification.Right)]
         public string PaymentTypeCode { get; set; }
     }
 }
