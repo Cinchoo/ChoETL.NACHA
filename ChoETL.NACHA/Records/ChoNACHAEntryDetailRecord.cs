@@ -91,10 +91,8 @@ namespace ChoETL.NACHA
         /// <summary>
         /// The Bank will assign a trace number.
         /// </summary>
-        [ChoFixedLengthRecordField(79, 14)]
-        public string TraceNumber { get; set; }
-
-        [ChoFixedLengthRecordField(77, 1, FieldValueJustification = ChoFieldValueJustification.Right)]
-        public string PaymentTypeCode { get; set; }
+        [ChoFixedLengthRecordField(79, 15)]
+        [Range(1, ulong.MaxValue, ErrorMessage = "Trace number must be > 0.")]
+        public ulong TraceNumber { get; set; }
     }
 }
