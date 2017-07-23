@@ -26,7 +26,6 @@ namespace ChoETL.NACHA
         public string DiscretionaryData { get; set; }
         public string TraceNumber { get; set; }
         public bool IsDebit { get; set; }
-        public string PaymentTypeCode { get; set; }
 
         private uint _addendaSeqNo;
 
@@ -54,7 +53,7 @@ namespace ChoETL.NACHA
             ChoNACHAAddendaRecord addendaRecord = ChoActivator.CreateInstance<ChoNACHAAddendaRecord>();
             addendaRecord.AddendaTypeCode = addendaTypeCode;
             addendaRecord.PaymentRelatedInformation = paymentRelatedInformation;
-            addendaRecord.AddendaSequenceNumber = ++_addendaSeqNo;  
+            addendaRecord.AddendaSequenceNumber = ++_addendaSeqNo;
             addendaRecord.EntryDetailSequenceNumber = ulong.Parse(TraceNumber.ToString().Last(7));
 
             _batchRunningStatObject.UpdateStat(addendaRecord);
@@ -79,8 +78,6 @@ namespace ChoETL.NACHA
             _NACHAEntryDetailRecord.IndividualName = IndividualName;
             _NACHAEntryDetailRecord.DiscretionaryData = DiscretionaryData;
             _NACHAEntryDetailRecord.TraceNumber = TraceNumber;
-            _NACHAEntryDetailRecord.PaymentTypeCode = PaymentTypeCode;
-
             _batchRunningStatObject.UpdateStat(_NACHAEntryDetailRecord, IsDebit);
 
             _writer.Write(_NACHAEntryDetailRecord);
