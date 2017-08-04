@@ -75,7 +75,7 @@ namespace ChoETL.NACHA
             _activeEntry.IndividualName = individualName;
             _activeEntry.DiscretionaryData = discretionaryData;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            _activeEntry.TraceNumber = ulong.Parse(_configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(8, '0'));
+            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(7, '0');
             _activeEntry.IsDebit = isDebit;
 
             return _activeEntry;
