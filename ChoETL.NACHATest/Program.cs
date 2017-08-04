@@ -36,27 +36,32 @@ namespace ChoETL.NACHATest
             {
                 using (var bw1 = nachaWriter.CreateBatch(200))
                 {
-                    using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
-                    {
-                        entry1.CreateAddendaRecord("Monthly bill");
-                    }
-                    using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    //using (var entry1 = bw1.CreateDebitEntryDetail(22, "123456789", "1313131313", 22.505M, null, "ID Name", "Desc Data"))
+                    //{
+                    //    entry1.CreateAddendaRecord("Monthly bill");
+                    //}
+                    //using (var entry2 = bw1.CreateCreditEntryDetail(22, "123456789", "1313131313", 22.505M, null, "ID Name", "Desc Data"))
+                    //{
+
+                    //}
+                    //using (var entry1 = bw1.CreateDebitEntryDetail(22, "123456789", "1313131313", 22.505M, null, "ID Name", "Desc Data"))
+                    //{
+                    //    entry1.CreateAddendaRecord("Monthly bill");
+                    //}
+                    using (var entry2 = bw1.CreateCreditEntryDetail(22, "123456789", "1313131313", 10M, null, "ID Name", "Desc Data"))
                     {
 
                     }
-                    using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
-                    {
-                        entry1.CreateAddendaRecord("Monthly bill");
-                    }
-                    using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    //using (var entry1 = bw1.CreateDebitEntryDetail(22, "123456789", "1313131313", 22.505M, null, "ID Name", "Desc Data"))
+                    //{
+                    //    entry1.CreateAddendaRecord("Monthly bill");
+                    //}
+                    using (var entry2 = bw1.CreateCreditEntryDetail(22, "123456789", "1313131313", 20M, null, "ID Name", "Desc Data"))
                     {
 
                     }
-                    using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
-                    {
-                        entry1.CreateAddendaRecord("Monthly bill");
-                    }
-                    using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                    //Create offset record
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
                     {
 
                     }

@@ -30,7 +30,7 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.GetEncoding(filePath), Configuration.BufferSize);
+            _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
 
             Init();
@@ -54,7 +54,7 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(inStream, Configuration.GetEncoding(inStream), Configuration.BufferSize);
+            _streamWriter = new StreamWriter(inStream, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
 
             Init();
