@@ -12,7 +12,7 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            ReadACHFile();
+            WriteACHFile();
         }
 
         static void ReadACHFile()
