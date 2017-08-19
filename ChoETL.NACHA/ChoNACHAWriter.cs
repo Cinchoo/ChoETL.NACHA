@@ -92,7 +92,7 @@ namespace ChoETL.NACHA
 
             _activeBatch.CompanyName = companyName.IsNullOrEmpty() ? Configuration.OriginatingCompanyName : companyName;
             _activeBatch.CompanyID = companyID.IsNullOrEmpty() ? Configuration.OriginatingCompanyId : companyID;
-            _activeBatch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.First(8) : originatingDFIID.First(8);
+            _activeBatch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.NTrim().First(8) : originatingDFIID.NTrim().First(8);
 
             return _activeBatch;
         }

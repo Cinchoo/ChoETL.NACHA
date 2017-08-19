@@ -71,7 +71,7 @@ namespace ChoETL.NACHA
             //Increment batch count
             _activeEntry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
             _activeEntry.TransactionCode = transactionCode;
-            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.First(8));
+            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.NTrim().First(8));
             _activeEntry.CheckDigit = RDFIRoutingNumber.Last();
             _activeEntry.DFIAccountNumber = DFIAccountNumber;
             _activeEntry.Amount = amount;
@@ -79,7 +79,7 @@ namespace ChoETL.NACHA
             _activeEntry.IndividualName = individualName;
             _activeEntry.DiscretionaryData = discretionaryData;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(7, '0');
+            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.NTrim().First(8) + tn.ToString().PadLeft(7, '0');
             _activeEntry.IsDebit = isDebit;
 
             return _activeEntry;
@@ -130,7 +130,7 @@ namespace ChoETL.NACHA
             _NACHABatchControlRecord.TotalCreditEntryDollarAmount = _batchRunningStatObject.TotalCreditEntryDollarAmount;
             _NACHABatchControlRecord.CompanyID = _configuration.OriginatingCompanyId;
             _NACHABatchControlRecord.MessageAuthenticationCode = MessageAuthenticationCode;
-            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
+            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.NTrim().First(8);
             _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
             _writer.Write(_NACHABatchControlRecord);

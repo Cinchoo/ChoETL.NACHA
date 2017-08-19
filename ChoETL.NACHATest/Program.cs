@@ -26,7 +26,7 @@ namespace ChoETL.NACHATest
         static void WriteACHFile()
         { 
             ChoNACHAConfiguration config = new ChoNACHAConfiguration();
-            config.DestinationBankRoutingNumber = "123456789";
+            config.DestinationBankRoutingNumber = " 123456789";
             config.OriginatingCompanyId = "123456789";
             config.DestinationBankName = "PNC Bank";
             config.OriginatingCompanyName = "Microsoft Inc.";
