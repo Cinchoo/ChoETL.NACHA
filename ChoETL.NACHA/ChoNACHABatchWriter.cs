@@ -19,6 +19,10 @@ namespace ChoETL.NACHA
         private ChoNACHAEntryDetailWriter _activeEntry = null;
         private readonly Lazy<bool> _batchHeaderWriter = null;
 
+        public string CompanyName { get; set; }
+        public string CompanyID { get; set; }
+        public string OriginatingDFIID { get; set; }
+
         public int ServiceClassCode { get; set; }
         public string CompanyDiscretionaryData { get; set; }
         public string StandardEntryClassCode { get; set; }
@@ -103,16 +107,16 @@ namespace ChoETL.NACHA
         {
             _NACHABatchHeaderRecord.BatchNumber = _fileRunningStatObject.NewBatch();
             _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
-            _NACHABatchHeaderRecord.CompanyName = _configuration.OriginatingCompanyName;
+            _NACHABatchHeaderRecord.CompanyName = CompanyName;
             _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
-            _NACHABatchHeaderRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchHeaderRecord.CompanyID = CompanyID;
             _NACHABatchHeaderRecord.StandardEntryClassCode = StandardEntryClassCode;
             _NACHABatchHeaderRecord.CompanyEntryDescription = CompanyEntryDescription;
             _NACHABatchHeaderRecord.CompanyDescriptiveDate = CompanyDescriptiveDate;
             _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
             _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
             _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
-            _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
+            _NACHABatchHeaderRecord.OriginatingDFIID = OriginatingDFIID;
 
             _writer.Write(_NACHABatchHeaderRecord);
         }

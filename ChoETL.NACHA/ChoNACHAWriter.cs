@@ -72,7 +72,7 @@ namespace ChoETL.NACHA
 
         public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null,
             DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
-            string companyDiscretionaryData = null, char originatorStatusCode = '1')
+            string companyDiscretionaryData = null, char originatorStatusCode = '1', string companyName = null, string companyID = null, string originatingDFIID = null)
         {
             CheckDisposed();
 
@@ -89,6 +89,10 @@ namespace ChoETL.NACHA
             _activeBatch.JulianSettlementDate = julianSettlementDate;
             _activeBatch.CompanyDiscretionaryData = companyDiscretionaryData;
             _activeBatch.OriginatorStatusCode = originatorStatusCode;
+
+            _activeBatch.CompanyName = companyName.IsNullOrEmpty() ? Configuration.OriginatingCompanyName : companyName;
+            _activeBatch.CompanyID = companyID.IsNullOrEmpty() ? Configuration.OriginatingCompanyId : companyID;
+            _activeBatch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.First(8) : originatingDFIID.First(8);
 
             return _activeBatch;
         }
