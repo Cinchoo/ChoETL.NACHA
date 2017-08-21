@@ -13,8 +13,8 @@ namespace ChoETL.NACHA
     {
         public override bool IsValid(object value)
         {
-            string v = value as string;
-            return ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()));
+            string v = value.ToNString();
+            return !v.IsNullOrEmpty() && ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()));
         }
     }
 
@@ -23,8 +23,8 @@ namespace ChoETL.NACHA
     {
         public override bool IsValid(object value)
         {
-            string v = value as string;
-            return ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()));
+            string v = value.ToNString();
+            return !v.IsNullOrEmpty() && ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()));
         }
     }
 
@@ -33,8 +33,8 @@ namespace ChoETL.NACHA
     {
         public override bool IsValid(object value)
         {
-            string v = value as string;
-            return v[0] != '0' && Regex.IsMatch(v, "^[0-9]+$", RegexOptions.Compiled);
+            string v = value.ToNString();
+            return !v.IsNullOrEmpty() && v.Length > 0 && v[0] != '0' && Regex.IsMatch(v, "^[0-9]+$", RegexOptions.Compiled);
         }
     }
 
@@ -43,8 +43,8 @@ namespace ChoETL.NACHA
     {
         public override bool IsValid(object value)
         {
-            string v = value as string;
-            return Char.IsDigit(v[0]);
+            string v = value.ToNString();
+            return !v.IsNullOrWhiteSpace() && v.Length > 0 && Char.IsDigit(v[0]);
         }
     }
 }
