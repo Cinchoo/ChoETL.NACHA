@@ -31,14 +31,16 @@ namespace ChoETL.NACHA
         /// Bank routing number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(3,10)]
-        [ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateDestination value found.")]
+        //[ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateDestination value found.")]
+        [ChoImmediateDestinationValidation(ErrorMessage = "Invalid ImmediateDestination value found.")]
         public string ImmediateDestination { get; set; }
 
         /// <summary>
         /// This is the ACH identification number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(13, 10)]
-        [ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateOrigin value found.")]
+        //[ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateOrigin value found.")]
+        [ChoImmediateOriginValidation(ErrorMessage = "Invalid ImmediateOrigin value found.")]
         public string ImmediateOrigin { get; set; }
 
         /// <summary>
