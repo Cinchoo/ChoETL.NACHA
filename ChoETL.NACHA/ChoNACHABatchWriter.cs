@@ -128,9 +128,9 @@ namespace ChoETL.NACHA
             _NACHABatchControlRecord.EntryHash = _batchRunningStatObject.EntryHash;
             _NACHABatchControlRecord.TotalDebitEntryDollarAmount = _batchRunningStatObject.TotalDebitEntryDollarAmount;
             _NACHABatchControlRecord.TotalCreditEntryDollarAmount = _batchRunningStatObject.TotalCreditEntryDollarAmount;
-            _NACHABatchControlRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchControlRecord.CompanyID = CompanyID;
             _NACHABatchControlRecord.MessageAuthenticationCode = MessageAuthenticationCode;
-            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.NTrim().First(8);
+            _NACHABatchControlRecord.OriginatingDFIID = OriginatingDFIID;
             _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
             _writer.Write(_NACHABatchControlRecord);
