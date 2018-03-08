@@ -111,7 +111,7 @@ namespace ChoETL.NACHA
 			if (_configuration.BatchNumberGenerator != null)
 				batchNumber = _configuration.BatchNumberGenerator();
 			if (batchNumber == 0)
-				batchNumber = new Random().Next(1, Int32.MaxValue);
+				batchNumber = (uint)new Random().Next(1, Int32.MaxValue);
 
 			_NACHABatchHeaderRecord.BatchNumber = batchNumber == 0 ? 1 : batchNumber;
 			_NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
