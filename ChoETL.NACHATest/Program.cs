@@ -65,11 +65,43 @@ namespace ChoETL.NACHATest
                     {
 
                     }
-                }
-                //using (var bw2 = nachaWriter.CreateBatch(200))
-                //{
-                //}
-            }
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+					{
+
+					}
+				}
+				//using (var bw2 = nachaWriter.CreateBatch(200))
+				//{
+				//}
+			}
         }
     }
 }
