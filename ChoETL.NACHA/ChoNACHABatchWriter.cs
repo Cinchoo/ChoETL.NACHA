@@ -13,8 +13,8 @@ namespace ChoETL.NACHA
         private readonly ChoNACHARunningStat _batchRunningStatObject;
         private bool _isDisposed = false;
 
-        private readonly ChoNACHABatchHeaderRecord _NACHABatchHeaderRecord = ChoActivator.CreateInstance<ChoNACHABatchHeaderRecord>();
-        private readonly ChoNACHABatchControlRecord _NACHABatchControlRecord = ChoActivator.CreateInstance<ChoNACHABatchControlRecord>();
+        private readonly ChoNACHABatchHeaderRecord _NACHABatchHeaderRecord = ChoActivator.CreateInstanceAndInit<ChoNACHABatchHeaderRecord>();
+        private readonly ChoNACHABatchControlRecord _NACHABatchControlRecord = ChoActivator.CreateInstanceAndInit<ChoNACHABatchControlRecord>();
         private ChoNACHAConfiguration _configuration = null;
         private ChoNACHAEntryDetailWriter _activeEntry = null;
         private readonly Lazy<bool> _batchHeaderWriter = null;

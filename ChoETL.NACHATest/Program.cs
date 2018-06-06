@@ -12,7 +12,7 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            ReadACHFile();
+            WriteACHFile();
         }
 
         static void ReadACHFile()
@@ -32,7 +32,7 @@ namespace ChoETL.NACHATest
             config.OriginatingCompanyName = "Microsoft Inc.";
             config.ReferenceCode = "Internal Use Only.";
             //config.BlockingFactor = 20;
-            using (var nachaWriter = new ChoNACHAWriter("ACH.txt", config))
+            using (var nachaWriter = new ChoNACHAWriter(@"C:\Temp\ACH.txt", config))
             {
                 using (var bw1 = nachaWriter.CreateBatch(200))
                 {

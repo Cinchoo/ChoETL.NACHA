@@ -67,7 +67,7 @@ namespace ChoETL.NACHA
             _writer.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
 
             WriteFileHeader();
-            _fileControlRecord = ChoActivator.CreateInstance<ChoNACHAFileControlRecord>();
+            _fileControlRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAFileControlRecord>();
         }
 
         public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null, 
@@ -123,7 +123,7 @@ namespace ChoETL.NACHA
 
         private void WriteFileHeader()
         {
-            ChoNACHAFileHeaderRecord header = ChoActivator.CreateInstance<ChoNACHAFileHeaderRecord>();
+            ChoNACHAFileHeaderRecord header = ChoActivator.CreateInstanceAndInit<ChoNACHAFileHeaderRecord>();
             header.PriorityCode = Configuration.PriorityCode;
             header.ImmediateDestination = Configuration.DestinationBankRoutingNumber;
             header.ImmediateOrigin = Configuration.OriginatingCompanyId;
@@ -159,7 +159,7 @@ namespace ChoETL.NACHA
             if (remain <= 0)
                 return;
 
-            ChoNACHAFileControlRecord NACHAFileControlFillerRecord = ChoActivator.CreateInstance<ChoNACHAFileControlRecord>();
+            ChoNACHAFileControlRecord NACHAFileControlFillerRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAFileControlRecord>();
             NACHAFileControlFillerRecord.BatchCount = 999999;
             NACHAFileControlFillerRecord.BlockCount = 999999;
             NACHAFileControlFillerRecord.EntryAddendaCount = 99999999;

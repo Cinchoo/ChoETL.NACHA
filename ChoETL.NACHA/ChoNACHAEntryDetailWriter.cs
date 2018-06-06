@@ -12,7 +12,7 @@ namespace ChoETL.NACHA
         private readonly ChoNACHARunningStat _batchRunningStatObject;
         private bool _isDisposed = false;
 
-        private readonly ChoNACHAEntryDetailRecord _NACHAEntryDetailRecord = ChoActivator.CreateInstance<ChoNACHAEntryDetailRecord>();
+        private readonly ChoNACHAEntryDetailRecord _NACHAEntryDetailRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAEntryDetailRecord>();
         private ChoNACHAConfiguration _configuration = null;
         private readonly Lazy<bool> _entryDetailWriter = null;
 
@@ -50,7 +50,7 @@ namespace ChoETL.NACHA
 
             var x = _entryDetailWriter.Value;
 
-            ChoNACHAAddendaRecord addendaRecord = ChoActivator.CreateInstance<ChoNACHAAddendaRecord>();
+            ChoNACHAAddendaRecord addendaRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAAddendaRecord>();
             addendaRecord.AddendaTypeCode = addendaTypeCode;
             addendaRecord.PaymentRelatedInformation = paymentRelatedInformation;
             addendaRecord.AddendaSequenceNumber = ++_addendaSeqNo;
