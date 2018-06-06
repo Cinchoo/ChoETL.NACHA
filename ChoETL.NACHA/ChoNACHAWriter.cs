@@ -168,8 +168,8 @@ namespace ChoETL.NACHA
             NACHAFileControlFillerRecord.BlockCount = 999999;
             NACHAFileControlFillerRecord.EntryAddendaCount = 99999999;
             NACHAFileControlFillerRecord.EntryHash = 9999999999;
-            NACHAFileControlFillerRecord.TotalDebitEntryDollarAmount = 999999999999;
-            NACHAFileControlFillerRecord.TotalCreditEntryDollarAmount = 999999999999;
+            NACHAFileControlFillerRecord.TotalDebitEntryDollarAmount = 9999999999.99M;
+            NACHAFileControlFillerRecord.TotalCreditEntryDollarAmount = 9999999999.99M;
             NACHAFileControlFillerRecord.Reserved = ChoString.Repeat("9", 39);
 
             for (int i = 0; i < Configuration.BlockingFactor - remain; i++)
