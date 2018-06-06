@@ -13,7 +13,7 @@ namespace ChoETL.NACHA
         private bool _closeStreamOnDispose = false;
         private ChoManifoldWriter _writer;
         private bool _isDisposed = false;
-        private  ChoNACHABatchWriter _activeBatch = null;
+        private ChoNACHABatchWriter _activeBatch = null;
         private ChoNACHAFileControlRecord _fileControlRecord = null;
         private ChoNACHARunningStat _runningStatObject = new ChoNACHARunningStat();
 
@@ -30,7 +30,7 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.GetEncoding(filePath), Configuration.BufferSize);
+            _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
 
             Init();
@@ -54,7 +54,7 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(inStream, Configuration.GetEncoding(inStream), Configuration.BufferSize);
+            _streamWriter = new StreamWriter(inStream, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
 
             Init();
@@ -70,9 +70,9 @@ namespace ChoETL.NACHA
             _fileControlRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAFileControlRecord>();
         }
 
-        public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null, 
+        public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null,
             DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
-            string companyDiscretionaryData = null, char originatorStatusCode = '1')
+            string companyDiscretionaryData = null, char originatorStatusCode = '1', string companyName = null, string companyID = null, string originatingDFIID = null)
         {
             CheckDisposed();
 
@@ -89,6 +89,10 @@ namespace ChoETL.NACHA
             _activeBatch.JulianSettlementDate = julianSettlementDate;
             _activeBatch.CompanyDiscretionaryData = companyDiscretionaryData;
             _activeBatch.OriginatorStatusCode = originatorStatusCode;
+
+            _activeBatch.CompanyName = companyName.IsNullOrEmpty() ? Configuration.OriginatingCompanyName : companyName;
+            _activeBatch.CompanyID = companyID.IsNullOrEmpty() ? Configuration.OriginatingCompanyId : companyID;
+            _activeBatch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.NTrim().First(8) : originatingDFIID.NTrim().First(8);
 
             return _activeBatch;
         }
@@ -141,7 +145,7 @@ namespace ChoETL.NACHA
         {
             _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
             if (Configuration.BlockingFactor > 0)
-                _fileControlRecord.BlockCount = (ulong)(_runningStatObject.TotalNoOfRecord / (double)Configuration.BlockingFactor + 0.5);
+                _fileControlRecord.BlockCount = (ulong)(Math.Ceiling(_runningStatObject.TotalNoOfRecord / (Configuration.BlockingFactor * 1.0)));
             _fileControlRecord.EntryAddendaCount = _runningStatObject.AddendaEntryCount;
             _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
             _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
@@ -155,7 +159,7 @@ namespace ChoETL.NACHA
             if (Configuration.BlockingFactor <= 0)
                 return;
 
-            uint remain = Configuration.BlockingFactor - _runningStatObject.TotalNoOfRecord % Configuration.BlockingFactor;
+            uint remain = _runningStatObject.TotalNoOfRecord % Configuration.BlockingFactor;
             if (remain <= 0)
                 return;
 
@@ -168,7 +172,7 @@ namespace ChoETL.NACHA
             NACHAFileControlFillerRecord.TotalCreditEntryDollarAmount = 999999999999;
             NACHAFileControlFillerRecord.Reserved = ChoString.Repeat("9", 39);
 
-            for (int i = 0; i < remain; i++)
+            for (int i = 0; i < Configuration.BlockingFactor - remain; i++)
                 _writer.Write(NACHAFileControlFillerRecord);
         }
 

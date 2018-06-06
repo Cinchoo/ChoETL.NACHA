@@ -19,6 +19,10 @@ namespace ChoETL.NACHA
         private ChoNACHAEntryDetailWriter _activeEntry = null;
         private readonly Lazy<bool> _batchHeaderWriter = null;
 
+        public string CompanyName { get; set; }
+        public string CompanyID { get; set; }
+        public string OriginatingDFIID { get; set; }
+
         public int ServiceClassCode { get; set; }
         public string CompanyDiscretionaryData { get; set; }
         public string StandardEntryClassCode { get; set; }
@@ -67,7 +71,7 @@ namespace ChoETL.NACHA
             //Increment batch count
             _activeEntry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
             _activeEntry.TransactionCode = transactionCode;
-            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.First(8));
+            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.NTrim().First(8));
             _activeEntry.CheckDigit = RDFIRoutingNumber.Last();
             _activeEntry.DFIAccountNumber = DFIAccountNumber;
             _activeEntry.Amount = amount;
@@ -75,7 +79,7 @@ namespace ChoETL.NACHA
             _activeEntry.IndividualName = individualName;
             _activeEntry.DiscretionaryData = discretionaryData;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            _activeEntry.TraceNumber = ulong.Parse(_configuration.DestinationBankRoutingNumber.First(8) + tn.ToString().PadLeft(8, '0'));
+            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.NTrim().First(8) + tn.ToString().PadLeft(7, '0');
             _activeEntry.IsDebit = isDebit;
 
             return _activeEntry;
@@ -101,18 +105,26 @@ namespace ChoETL.NACHA
 
         private void WriteBatchHeader()
         {
-            _NACHABatchHeaderRecord.BatchNumber = _fileRunningStatObject.NewBatch();
-            _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
-            _NACHABatchHeaderRecord.CompanyName = _configuration.OriginatingCompanyName;
+			_fileRunningStatObject.NewBatch();
+
+			uint batchNumber = _configuration.BatchNumber;
+			if (_configuration.BatchNumberGenerator != null)
+				batchNumber = _configuration.BatchNumberGenerator();
+			if (batchNumber == 0)
+				batchNumber = (uint)new Random().Next(1, Int32.MaxValue);
+
+			_NACHABatchHeaderRecord.BatchNumber = batchNumber == 0 ? 1 : batchNumber;
+			_NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
+            _NACHABatchHeaderRecord.CompanyName = CompanyName;
             _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
-            _NACHABatchHeaderRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchHeaderRecord.CompanyID = CompanyID;
             _NACHABatchHeaderRecord.StandardEntryClassCode = StandardEntryClassCode;
             _NACHABatchHeaderRecord.CompanyEntryDescription = CompanyEntryDescription;
             _NACHABatchHeaderRecord.CompanyDescriptiveDate = CompanyDescriptiveDate;
             _NACHABatchHeaderRecord.EffectiveEntryDate = EffectiveEntryDate;
             _NACHABatchHeaderRecord.JulianSettlementDate = JulianSettlementDate;
             _NACHABatchHeaderRecord.OriginatorStatusCode = OriginatorStatusCode;
-            _NACHABatchHeaderRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
+            _NACHABatchHeaderRecord.OriginatingDFIID = OriginatingDFIID;
 
             _writer.Write(_NACHABatchHeaderRecord);
         }
@@ -124,9 +136,9 @@ namespace ChoETL.NACHA
             _NACHABatchControlRecord.EntryHash = _batchRunningStatObject.EntryHash;
             _NACHABatchControlRecord.TotalDebitEntryDollarAmount = _batchRunningStatObject.TotalDebitEntryDollarAmount;
             _NACHABatchControlRecord.TotalCreditEntryDollarAmount = _batchRunningStatObject.TotalCreditEntryDollarAmount;
-            _NACHABatchControlRecord.CompanyID = _configuration.OriginatingCompanyId;
+            _NACHABatchControlRecord.CompanyID = CompanyID;
             _NACHABatchControlRecord.MessageAuthenticationCode = MessageAuthenticationCode;
-            _NACHABatchControlRecord.OriginatingDFIID = _configuration.DestinationBankRoutingNumber.First(8);
+            _NACHABatchControlRecord.OriginatingDFIID = OriginatingDFIID;
             _NACHABatchControlRecord.BatchNumber = _NACHABatchHeaderRecord.BatchNumber;
 
             _writer.Write(_NACHABatchControlRecord);

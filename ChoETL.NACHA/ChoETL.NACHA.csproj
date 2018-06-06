@@ -64,6 +64,7 @@
     <Compile Include="Exceptions\ChoNACHAConfigurationException.cs" />
     <Compile Include="Enums.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Shared\ChoImmediateOriginValidatorAttribute.cs" />
     <Compile Include="Shared\ChoNACHARunningStat.cs" />
   </ItemGroup>
   <ItemGroup>

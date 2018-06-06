@@ -45,7 +45,8 @@ namespace ChoETL.NACHA
         /// This is the last digit of the routing number.
         /// </summary>
         [ChoFixedLengthRecordField(11, 1)]
-        [ChoCustomCodeValidator("v => Char.IsDigit(v[0])", ErrorMessage = "CheckDigit must be number.", ParamType = typeof(string))]
+        //[ChoCustomCodeValidator("v => Char.IsDigit(v[0])", ErrorMessage = "CheckDigit must be number.", ParamType = typeof(string))]
+        [ChoIsDigit(ErrorMessage = "CheckDigit must be number.")]
         public char CheckDigit { get; set; }
 
         /// <summary>
@@ -92,7 +93,6 @@ namespace ChoETL.NACHA
         /// The Bank will assign a trace number.
         /// </summary>
         [ChoFixedLengthRecordField(79, 15)]
-        [Range(1, ulong.MaxValue, ErrorMessage = "Trace number must be > 0.")]
-        public ulong TraceNumber { get; set; }
+        public string TraceNumber { get; set; }
     }
 }
