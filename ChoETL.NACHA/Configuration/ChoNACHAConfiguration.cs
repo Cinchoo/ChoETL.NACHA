@@ -20,7 +20,19 @@ namespace ChoETL.NACHA
             set;
         }
 
+        public bool TurnOffDestinationBankRoutingNumber
+        {
+            get;
+            set;
+        }
+
         public string OriginatingCompanyId
+        {
+            get;
+            set;
+        }
+
+        public bool TurnOffOriginatingCompanyIdValidation
         {
             get;
             set;
@@ -54,10 +66,10 @@ namespace ChoETL.NACHA
         }
 
         public string ReferenceCode { get; set; }
-		public uint BatchNumber { get; set; }
-		public Func<uint> BatchNumberGenerator { get; set; }
+        public uint BatchNumber { get; set; }
+        public Func<uint> BatchNumberGenerator { get; set; }
 
-		public ChoNACHAConfiguration()
+        public ChoNACHAConfiguration()
         {
             PriorityCode = "01";
             FileIDModifier = 'A';

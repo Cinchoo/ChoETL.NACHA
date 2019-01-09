@@ -24,15 +24,21 @@ namespace ChoETL.NACHATest
         }
 
         static void WriteACHFile()
-        { 
+        {
+            ChoETLFrxBootstrap.TraceLevel = System.Diagnostics.TraceLevel.Verbose;
+
             ChoNACHAConfiguration config = new ChoNACHAConfiguration();
             config.DestinationBankRoutingNumber = " 123456789";
-            config.OriginatingCompanyId = "123456789";
+            config.OriginatingCompanyId = "1234567890";
             config.DestinationBankName = "PNC Bank";
             config.OriginatingCompanyName = "Microsoft Inc.";
             config.ReferenceCode = "Internal Use Only.";
+
+            //config.TurnOffOriginatingCompanyIdValidation = true;
+            config.ErrorMode = ChoErrorMode.ThrowAndStop;
             //config.BlockingFactor = 20;
-            using (var nachaWriter = new ChoNACHAWriter(@"C:\Temp\ACH.txt", config))
+            using (var nachaWriter = new ChoNACHAWriter(@"C:\Temp\ACH.txt", config)
+                )
             {
                 using (var bw1 = nachaWriter.CreateBatch(200))
                 {
@@ -65,43 +71,43 @@ namespace ChoETL.NACHATest
                     {
 
                     }
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-					using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
-					{
+                    }
+                    using (var entry2 = bw1.CreateDebitEntryDetail(27, "123456789", "1313131313", 30M, null, "OFFSET", ""))
+                    {
 
-					}
-				}
-				//using (var bw2 = nachaWriter.CreateBatch(200))
-				//{
-				//}
-			}
+                    }
+                }
+                //using (var bw2 = nachaWriter.CreateBatch(200))
+                //{
+                //}
+            }
         }
     }
 }

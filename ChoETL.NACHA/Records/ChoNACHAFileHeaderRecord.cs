@@ -31,16 +31,14 @@ namespace ChoETL.NACHA
         /// Bank routing number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(3,10)]
-        //[ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateDestination value found.")]
-        [ChoImmediateDestinationValidation(ErrorMessage = "Invalid ImmediateDestination value found.")]
+        //[ChoImmediateDestinationValidation(ErrorMessage = "Invalid ImmediateDestination value found.")]
         public string ImmediateDestination { get; set; }
 
         /// <summary>
         /// This is the ACH identification number preceded by a space.
         /// </summary>
         [ChoFixedLengthRecordField(13, 10)]
-        //[ChoCustomCodeValidator("v => ((v.Length == 9 && !v.Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && v[0] == ' ' && !v.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (v.Length == 10 && !v.Where(c => !Char.IsDigit(c)).Any()))", ErrorMessage = "Invalid ImmediateOrigin value found.")]
-        [ChoImmediateOriginValidation(ErrorMessage = "Invalid ImmediateOrigin value found.")]
+        //[ChoImmediateOriginValidation(ErrorMessage = "Invalid ImmediateOrigin value found.")]
         public string ImmediateOrigin { get; set; }
 
         /// <summary>
@@ -108,5 +106,24 @@ namespace ChoETL.NACHA
         /// </summary>
         [ChoFixedLengthRecordField(86, 8)]
         public string ReferenceCode { get; set; }
+
+        public void Validate(ChoNACHAConfiguration configuration)
+        {
+            if (!configuration.TurnOffDestinationBankRoutingNumber)
+            {
+                string immediateDestination = ImmediateDestination.ToNString();
+                var value1 = !immediateDestination.IsNullOrEmpty() && ((immediateDestination.Length == 9 && !immediateDestination.Where(c => !Char.IsDigit(c)).Any()) || (immediateDestination.Length == 10 && immediateDestination[0] == ' ' && !immediateDestination.Skip(1).Where(c => !Char.IsDigit(c)).Any()));
+                if (!value1)
+                    throw new ChoNACHAException("Invalid ImmediateDestination value found.");
+            }
+
+            if (!configuration.TurnOffOriginatingCompanyIdValidation)
+            {
+                string immediateOrigin = ImmediateOrigin.ToNString();
+                var value2 = !immediateOrigin.IsNullOrEmpty() && ((immediateOrigin.Length == 9 && !immediateOrigin.Where(c => !Char.IsDigit(c)).Any()) || (immediateOrigin.Length == 10 && immediateOrigin[0] == ' ' && !immediateOrigin.Skip(1).Where(c => !Char.IsDigit(c)).Any()) || (immediateOrigin.Length == 10 && !immediateOrigin.Where(c => !Char.IsDigit(c)).Any()));
+                if (!value2)
+                    throw new ChoNACHAException("Invalid ImmediateOrigin value found.");
+            }
+        }
     }
 }

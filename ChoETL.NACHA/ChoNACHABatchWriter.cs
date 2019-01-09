@@ -105,16 +105,16 @@ namespace ChoETL.NACHA
 
         private void WriteBatchHeader()
         {
-			_fileRunningStatObject.NewBatch();
+            _fileRunningStatObject.NewBatch();
 
-			uint batchNumber = _configuration.BatchNumber;
-			if (_configuration.BatchNumberGenerator != null)
-				batchNumber = _configuration.BatchNumberGenerator();
-			if (batchNumber == 0)
-				batchNumber = (uint)new Random().Next(1, Int32.MaxValue);
+            uint batchNumber = _configuration.BatchNumber;
+            if (_configuration.BatchNumberGenerator != null)
+                batchNumber = _configuration.BatchNumberGenerator();
+            if (batchNumber == 0)
+                batchNumber = (uint)new Random().Next(1, Int32.MaxValue);
 
-			_NACHABatchHeaderRecord.BatchNumber = batchNumber == 0 ? 1 : batchNumber;
-			_NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
+            _NACHABatchHeaderRecord.BatchNumber = batchNumber == 0 ? 1 : batchNumber;
+            _NACHABatchHeaderRecord.ServiceClassCode = ServiceClassCode;
             _NACHABatchHeaderRecord.CompanyName = CompanyName;
             _NACHABatchHeaderRecord.CompanyDiscretionaryData = CompanyDiscretionaryData;
             _NACHABatchHeaderRecord.CompanyID = CompanyID;

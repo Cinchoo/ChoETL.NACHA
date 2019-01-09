@@ -138,6 +138,8 @@ namespace ChoETL.NACHA
             header.ImmediateOriginName = Configuration.OriginatingCompanyName;
             header.ReferenceCode = Configuration.ReferenceCode;
 
+            header.Validate(Configuration);
+
             _writer.Write(header);
         }
 
