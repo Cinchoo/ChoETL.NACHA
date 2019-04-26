@@ -12,7 +12,8 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            WriteACHFile();
+            ChoETLFrxBootstrap.TraceLevel = System.Diagnostics.TraceLevel.Verbose;
+            ReadACHFile();
         }
 
         static void ReadACHFile()

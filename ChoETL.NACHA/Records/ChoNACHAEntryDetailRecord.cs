@@ -60,7 +60,7 @@ namespace ChoETL.NACHA
         /// The decimal point is implied, not hard coded.
         /// </summary>
         [ChoFixedLengthRecordField(29, 10)]
-        [ChoTypeConverter(typeof(ChoCustomExprConverter), Parameters = @", 'v => v.ToString(""#.00"").Replace(""."", """")'")]
+        [ChoTypeConverter(typeof(ChoCustomExprConverter), Parameters = @"'v => Decimal.Parse(v)/100.00', 'v => v.ToString(""#.00"").Replace(""."", """")'")]
         public decimal Amount { get; set; }
 
         /// <summary>

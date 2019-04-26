@@ -1,0 +1,39 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp2.1</TargetFramework>
+    <Version>1.0.1.6</Version>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Include="..\ChoETL.NACHA\ChoNACHABatchWriter.cs" Link="ChoNACHABatchWriter.cs" />
+    <Compile Include="..\ChoETL.NACHA\ChoNACHAEntryDetailWriter.cs" Link="ChoNACHAEntryDetailWriter.cs" />
+    <Compile Include="..\ChoETL.NACHA\ChoNACHAReader.cs" Link="ChoNACHAReader.cs" />
+    <Compile Include="..\ChoETL.NACHA\ChoNACHAWriter.cs" Link="ChoNACHAWriter.cs" />
+    <Compile Include="..\ChoETL.NACHA\Configuration\ChoNACHAConfiguration.cs" Link="Configuration\ChoNACHAConfiguration.cs" />
+    <Compile Include="..\ChoETL.NACHA\Enums.cs" Link="Enums.cs" />
+    <Compile Include="..\ChoETL.NACHA\Exceptions\ChoNACHAConfigurationException.cs" Link="Exceptions\ChoNACHAConfigurationException.cs" />
+    <Compile Include="..\ChoETL.NACHA\Exceptions\ChoNACHAException.cs" Link="Exceptions\ChoNACHAException.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAAddendaRecord.cs" Link="Records\ChoNACHAAddendaRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHABatchControlRecord.cs" Link="Records\ChoNACHABatchControlRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHABatchHeaderRecord.cs" Link="Records\ChoNACHABatchHeaderRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAEntryDetailRecord.cs" Link="Records\ChoNACHAEntryDetailRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileControlRecord.cs" Link="Records\ChoNACHAFileControlRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileHeaderRecord.cs" Link="Records\ChoNACHAFileHeaderRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Shared\ChoImmediateOriginValidatorAttribute.cs" Link="Shared\ChoImmediateOriginValidatorAttribute.cs" />
+    <Compile Include="..\ChoETL.NACHA\Shared\ChoNACHARunningStat.cs" Link="Shared\ChoNACHARunningStat.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Configuration\" />
+    <Folder Include="Exceptions\" />
+    <Folder Include="Shared\" />
+    <Folder Include="Records\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ChoETL.NETStandard" Version="1.1.0.2" />
+  </ItemGroup>
+
+</Project>
