@@ -7,7 +7,13 @@ This simple, nifty library exposes the .NET classes to read and process the NACH
 
 To install Cinchoo PGP, run the following command in the Package Manager Console
 
+##### .NET Framework
+
     PM> Install-Package ChoETL.NACHA
+
+##### .NET Core
+
+    PM> Install-Package ChoETL.NACHA.NETStandard
 
 Add namespace to the program
 
