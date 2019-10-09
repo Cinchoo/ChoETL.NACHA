@@ -9,7 +9,7 @@ namespace ChoETL.NACHA
 {
     public class ChoNACHAWriter : IDisposable
     {
-        private StreamWriter _streamWriter;
+        private TextWriter _textWriter;
         private bool _closeStreamOnDispose = false;
         private ChoManifoldWriter _writer;
         private bool _isDisposed = false;
@@ -23,6 +23,11 @@ namespace ChoETL.NACHA
             private set;
         }
 
+        public ChoNACHAWriter(StringBuilder sb, ChoNACHAConfiguration configuration = null) : this(new StringWriter(sb), configuration)
+        {
+
+        }
+
         public ChoNACHAWriter(string filePath, ChoNACHAConfiguration configuration = null)
         {
             ChoGuard.ArgumentNotNullOrEmpty(filePath, "FilePath");
@@ -30,19 +35,19 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.Encoding, Configuration.BufferSize);
+            _textWriter = new StreamWriter(ChoPath.GetFullPath(filePath), false, Configuration.Encoding, Configuration.BufferSize);
             _closeStreamOnDispose = true;
 
             Init();
         }
 
-        public ChoNACHAWriter(StreamWriter streamWriter, ChoNACHAConfiguration configuration = null)
+        public ChoNACHAWriter(TextWriter textWriter, ChoNACHAConfiguration configuration = null)
         {
-            ChoGuard.ArgumentNotNull(streamWriter, "StreamWriter");
+            ChoGuard.ArgumentNotNull(textWriter, "TextWriter");
             Configuration = configuration;
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
-            _streamWriter = streamWriter;
+            _textWriter = textWriter;
 
             Init();
         }
@@ -54,15 +59,17 @@ namespace ChoETL.NACHA
             if (Configuration == null)
                 Configuration = new ChoNACHAConfiguration();
 
-            _streamWriter = new StreamWriter(inStream, Configuration.Encoding, Configuration.BufferSize);
-            _closeStreamOnDispose = true;
+            if (inStream is MemoryStream)
+                _textWriter = new StreamWriter(inStream);
+            else
+                _textWriter = new StreamWriter(inStream, Configuration.Encoding, Configuration.BufferSize);
 
             Init();
         }
 
         private void Init()
         {
-            _writer = new ChoManifoldWriter(_streamWriter, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
+            _writer = new ChoManifoldWriter(_textWriter, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
             _writer.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
 
@@ -80,19 +87,21 @@ namespace ChoETL.NACHA
                 throw new ChoNACHAException("There is already open batch associated with this writer which must be closed first.");
 
             //Increment batch count
-            _activeBatch = new ChoNACHABatchWriter(_writer, _runningStatObject, Configuration);
-            _activeBatch.ServiceClassCode = serviceClassCode;
-            _activeBatch.StandardEntryClassCode = standardEntryClassCode;
-            _activeBatch.CompanyEntryDescription = companyEntryDescription;
-            _activeBatch.CompanyDescriptiveDate = companyDescriptiveDate;
-            _activeBatch.EffectiveEntryDate = effectiveEntryDate;
-            _activeBatch.JulianSettlementDate = julianSettlementDate;
-            _activeBatch.CompanyDiscretionaryData = companyDiscretionaryData;
-            _activeBatch.OriginatorStatusCode = originatorStatusCode;
+            var batch = new ChoNACHABatchWriter(_writer, _runningStatObject, Configuration);
+            batch.ServiceClassCode = serviceClassCode;
+            batch.StandardEntryClassCode = standardEntryClassCode;
+            batch.CompanyEntryDescription = companyEntryDescription;
+            batch.CompanyDescriptiveDate = companyDescriptiveDate;
+            batch.EffectiveEntryDate = effectiveEntryDate;
+            batch.JulianSettlementDate = julianSettlementDate;
+            batch.CompanyDiscretionaryData = companyDiscretionaryData;
+            batch.OriginatorStatusCode = originatorStatusCode;
 
-            _activeBatch.CompanyName = companyName.IsNullOrEmpty() ? Configuration.OriginatingCompanyName : companyName;
-            _activeBatch.CompanyID = companyID.IsNullOrEmpty() ? Configuration.OriginatingCompanyId : companyID;
-            _activeBatch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.NTrim().First(8) : originatingDFIID.NTrim().First(8);
+            batch.CompanyName = companyName.IsNullOrEmpty() ? Configuration.OriginatingCompanyName : companyName;
+            batch.CompanyID = companyID.IsNullOrEmpty() ? Configuration.OriginatingCompanyId : companyID;
+            batch.OriginatingDFIID = originatingDFIID.IsNullOrEmpty() ? Configuration.DestinationBankRoutingNumber.NTrim().First(8) : originatingDFIID.NTrim().First(8);
+
+            _activeBatch = batch;
 
             return _activeBatch;
         }
@@ -108,7 +117,7 @@ namespace ChoETL.NACHA
             WriteFileControlFillerRecords();
 
             if (_closeStreamOnDispose)
-                _streamWriter.Dispose();
+                _textWriter.Dispose();
 
             _isDisposed = true;
         }

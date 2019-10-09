@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -10,9 +11,10 @@ namespace ChoETL.NACHA
 {
     public class ChoNACHAReader : IDisposable, IEnumerable
     {
-        private StreamReader _streamReader;
+        private TextReader _textReader;
         private bool _closeStreamOnDispose = false;
         private Lazy<IEnumerator> _enumerator = null;
+        public TraceSwitch TraceSwitch = ChoETLFramework.TraceSwitch;
 
         public ChoNACHAConfiguration Configuration
         {
@@ -26,17 +28,22 @@ namespace ChoETL.NACHA
             Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(ChoPath.GetFullPath(filePath), Configuration.GetEncoding(filePath), false, Configuration.BufferSize);
+            _textReader = new StreamReader(ChoPath.GetFullPath(filePath), Configuration.GetEncoding(filePath), false, Configuration.BufferSize);
             _closeStreamOnDispose = true;
         }
 
-        public ChoNACHAReader(StreamReader streamReader, ChoNACHAConfiguration configuration = null)
+        public ChoNACHAReader(StringBuilder sb, ChoNACHAConfiguration configuration = null) : this(new StringReader(sb.ToString()), configuration)
         {
-            ChoGuard.ArgumentNotNull(streamReader, "StreamReader");
+
+        }
+
+        public ChoNACHAReader(TextReader textReader, ChoNACHAConfiguration configuration = null)
+        {
+            ChoGuard.ArgumentNotNull(textReader, "TextReader");
             Configuration = configuration;
             Init();
 
-            _streamReader = streamReader;
+            _textReader = textReader;
         }
 
         public ChoNACHAReader(Stream inStream, ChoNACHAConfiguration configuration = null)
@@ -45,8 +52,10 @@ namespace ChoETL.NACHA
             Configuration = configuration;
             Init();
 
-            _streamReader = new StreamReader(inStream, Configuration.GetEncoding(inStream), false, Configuration.BufferSize);
-            _closeStreamOnDispose = true;
+            if (inStream is MemoryStream)
+                _textReader = new StreamReader(inStream);
+            else
+                _textReader = new StreamReader(inStream, Configuration.GetEncoding(inStream), false, Configuration.BufferSize);
         }
 
         private void Init()
@@ -75,17 +84,26 @@ namespace ChoETL.NACHA
         public void Dispose()
         {
             if (_closeStreamOnDispose)
-                _streamReader.Dispose();
+                _textReader.Dispose();
         }
 
         public IEnumerator GetEnumerator()
         {
-            ChoManifoldReader reader = new ChoManifoldReader(_streamReader, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
+            ChoManifoldReader reader = new ChoManifoldReader(_textReader, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
-
+            reader.TraceSwitch = TraceSwitch;
             reader.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
             object state = null;
             return ChoNACHAEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
+        }
+
+
+        public static ChoNACHAReader LoadText(string inputText, Encoding encoding = null, ChoNACHAConfiguration configuration = null, TraceSwitch traceSwitch = null)
+        {
+            var r = new ChoNACHAReader(inputText.ToStream(encoding), configuration) { TraceSwitch = traceSwitch == null ? ChoETLFramework.TraceSwitch : traceSwitch };
+            r._closeStreamOnDispose = true;
+
+            return r;
         }
 
         public class ChoNACHAEnumeratorWrapper

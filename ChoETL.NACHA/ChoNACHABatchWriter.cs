@@ -69,18 +69,20 @@ namespace ChoETL.NACHA
             var x = _batchHeaderWriter.Value;
 
             //Increment batch count
-            _activeEntry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
-            _activeEntry.TransactionCode = transactionCode;
-            _activeEntry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.NTrim().First(8));
-            _activeEntry.CheckDigit = RDFIRoutingNumber.Last();
-            _activeEntry.DFIAccountNumber = DFIAccountNumber;
-            _activeEntry.Amount = amount;
-            _activeEntry.IndividualIDNumber = individualIDNumber;
-            _activeEntry.IndividualName = individualName;
-            _activeEntry.DiscretionaryData = discretionaryData;
+            var entry = new ChoNACHAEntryDetailWriter(_writer, _batchRunningStatObject, _configuration);
+            entry.TransactionCode = transactionCode;
+            entry.ReceivingDFIID = ulong.Parse(RDFIRoutingNumber.NTrim().First(8));
+            entry.CheckDigit = RDFIRoutingNumber.Last();
+            entry.DFIAccountNumber = DFIAccountNumber;
+            entry.Amount = amount;
+            entry.IndividualIDNumber = individualIDNumber;
+            entry.IndividualName = individualName;
+            entry.DiscretionaryData = discretionaryData;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            _activeEntry.TraceNumber = _configuration.DestinationBankRoutingNumber.NTrim().First(8) + tn.ToString().PadLeft(7, '0');
-            _activeEntry.IsDebit = isDebit;
+            entry.TraceNumber = _configuration.DestinationBankRoutingNumber.NTrim().First(8) + tn.ToString().PadLeft(7, '0');
+            entry.IsDebit = isDebit;
+
+            _activeEntry = entry;
 
             return _activeEntry;
 
