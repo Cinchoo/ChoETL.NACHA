@@ -70,8 +70,8 @@ namespace ChoETL.NACHA
         /// This date may be printed on the receivers’ bank statement by the RDFI
         /// </summary>
         [ChoFixedLengthRecordField(63, 6)]
-        [ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "yyMMdd")]
-        public DateTime? CompanyDescriptiveDate { get; set; }
+        //[ChoTypeConverter(typeof(ChoDateTimeConverter), Parameters = "yyMMdd")]
+        public string CompanyDescriptiveDate { get; set; }
 
         /// <summary>
         /// Date transactions are to be posted to the receivers’ account. 

@@ -6,8 +6,14 @@ MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoETL.NACHA", "ChoETL.NACHA\ChoETL.NACHA.csproj", "{8BDB0366-75FD-452F-9AF0-E3ED320575B7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoETL.NACHATest", "ChoETL.NACHATest\ChoETL.NACHATest.csproj", "{E5F7D6E2-B0CE-4DAE-A8F1-9F0B37EB9FE1}"
+	ProjectSection(ProjectDependencies) = postProject
+		{0714B848-9C89-4844-96F2-08EBB6A51D2B} = {0714B848-9C89-4844-96F2-08EBB6A51D2B}
+	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ChoETL.NACHA.NETStandard", "ChoETL.NACHA.Core\ChoETL.NACHA.NETStandard.csproj", "{0714B848-9C89-4844-96F2-08EBB6A51D2B}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ChoETL.NACHA.NETStandard", "ChoETL.NACHA.Core\ChoETL.NACHA.NETStandard.csproj", "{0714B848-9C89-4844-96F2-08EBB6A51D2B}"
+	ProjectSection(ProjectDependencies) = postProject
+		{8BDB0366-75FD-452F-9AF0-E3ED320575B7} = {8BDB0366-75FD-452F-9AF0-E3ED320575B7}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
