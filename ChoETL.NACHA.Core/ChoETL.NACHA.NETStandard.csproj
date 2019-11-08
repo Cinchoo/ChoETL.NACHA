@@ -33,7 +33,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChoETL.NETStandard" Version="1.1.0.2" />
+    <PackageReference Include="ChoETL.NETStandard" Version="1.1.0.4" />
   </ItemGroup>
 
 </Project>
