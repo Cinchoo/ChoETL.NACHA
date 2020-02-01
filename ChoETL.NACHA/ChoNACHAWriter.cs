@@ -79,7 +79,8 @@ namespace ChoETL.NACHA
 
         public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null,
             DateTime? companyDescriptiveDate = null, DateTime? effectiveEntryDate = null, string julianSettlementDate = null,
-            string companyDiscretionaryData = null, char originatorStatusCode = '1', string companyName = null, string companyID = null, string originatingDFIID = null)
+            string companyDiscretionaryData = null, char originatorStatusCode = '1', string companyName = null, string companyID = null, string originatingDFIID = null,
+            string isoOriginatingCurrencyCode = "USD", string isoDestinationCurrencyCode = "USD")
         {
             CheckDisposed();
 
@@ -91,7 +92,11 @@ namespace ChoETL.NACHA
             batch.ServiceClassCode = serviceClassCode;
             batch.StandardEntryClassCode = standardEntryClassCode;
             batch.CompanyEntryDescription = companyEntryDescription;
-            batch.CompanyDescriptiveDate = companyDescriptiveDate;
+            if (standardEntryClassCode != null && standardEntryClassCode.ToUpper().Trim() == "IAT")
+                batch.CompanyDescriptiveDate = String.Format("{0}{1}", isoOriginatingCurrencyCode, isoDestinationCurrencyCode);
+            else
+                batch.CompanyDescriptiveDate = companyDescriptiveDate == null ? DateTime.Now.Date.ToString("yyMMdd") : companyDescriptiveDate.Value.Date.ToString("yyMMdd");
+
             batch.EffectiveEntryDate = effectiveEntryDate;
             batch.JulianSettlementDate = julianSettlementDate;
             batch.CompanyDiscretionaryData = companyDiscretionaryData;

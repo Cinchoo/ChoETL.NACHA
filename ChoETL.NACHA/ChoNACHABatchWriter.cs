@@ -27,7 +27,7 @@ namespace ChoETL.NACHA
         public string CompanyDiscretionaryData { get; set; }
         public string StandardEntryClassCode { get; set; }
         public string CompanyEntryDescription { get; set; }
-        public DateTime? CompanyDescriptiveDate { get; set; }
+        public string CompanyDescriptiveDate { get; set; }
         public DateTime? EffectiveEntryDate { get; set; }
         public string JulianSettlementDate { get; set; }
         public char OriginatorStatusCode { get; set; }

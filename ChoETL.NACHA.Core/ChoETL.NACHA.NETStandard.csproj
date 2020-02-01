@@ -2,8 +2,19 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>1.0.1.6</Version>
+    <Version>1.0.1.8</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <Authors>Cinchoo</Authors>
+    <Company>Cinchoo Inc.</Company>
+    <Description>NACHA Library for .NET</Description>
+    <Copyright>Copyright Cinchoo Inc.</Copyright>
+    <PackageLicenseUrl>https://github.com/Cinchoo/ChoETL.NACHA/blob/master/LICENSE</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/Cinchoo/ChoETL.NACHA</PackageProjectUrl>
+    <PackageIconUrl>http://www.gravatar.com/avatar/6ebc114acdd1d9f7ec5028a165a819b1.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/Cinchoo/ChoETL.NACHA</RepositoryUrl>
+    <RepositoryType>GitHub</RepositoryType>
+    <PackageTags>ETL c# .NET NACHA</PackageTags>
+    <PackageReleaseNotes>.NET Standard version</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
