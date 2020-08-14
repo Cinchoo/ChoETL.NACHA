@@ -16,6 +16,13 @@ namespace ChoETL.NACHA
         private ChoNACHABatchWriter _activeBatch = null;
         private ChoNACHAFileControlRecord _fileControlRecord = null;
         private ChoNACHARunningStat _runningStatObject = new ChoNACHARunningStat();
+        private Lazy<object> _headerInitializer;
+
+
+        public ChoManifoldWriter WriterHandle
+        {
+            get { return _writer; }
+        }
 
         public ChoNACHAConfiguration Configuration
         {
@@ -73,8 +80,12 @@ namespace ChoETL.NACHA
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
             _writer.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
 
-            WriteFileHeader();
-            _fileControlRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAFileControlRecord>();
+            _headerInitializer = new Lazy<object>(() =>
+            {
+                WriteFileHeader();
+                _fileControlRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAFileControlRecord>();
+                return null;
+            });
         }
 
         public ChoNACHABatchWriter CreateBatch(int serviceClassCode, string standardEntryClassCode = "PPD", string companyEntryDescription = null,
@@ -83,6 +94,8 @@ namespace ChoETL.NACHA
             string isoOriginatingCurrencyCode = "USD", string isoDestinationCurrencyCode = "USD")
         {
             CheckDisposed();
+
+            var x = _headerInitializer.Value;
 
             if (_activeBatch != null && !_activeBatch.IsClosed())
                 throw new ChoNACHAException("There is already open batch associated with this writer which must be closed first.");
@@ -115,6 +128,8 @@ namespace ChoETL.NACHA
         {
             if (_isDisposed)
                 return;
+
+            var x = _headerInitializer.Value;
 
             CloseCurrentBatch();
 
@@ -159,15 +174,18 @@ namespace ChoETL.NACHA
 
         private void WriteFileControl()
         {
-            _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
-            if (Configuration.BlockingFactor > 0)
-                _fileControlRecord.BlockCount = (ulong)(Math.Ceiling(_runningStatObject.TotalNoOfRecord / (Configuration.BlockingFactor * 1.0)));
-            _fileControlRecord.EntryAddendaCount = _runningStatObject.AddendaEntryCount;
-            _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
-            _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
-            _fileControlRecord.TotalCreditEntryDollarAmount = _runningStatObject.TotalCreditEntryDollarAmount;
+            if (_fileControlRecord != null)
+            {
+                _fileControlRecord.BatchCount = _runningStatObject.BatchCount;
+                if (Configuration.BlockingFactor > 0)
+                    _fileControlRecord.BlockCount = (ulong)(Math.Ceiling(_runningStatObject.TotalNoOfRecord / (Configuration.BlockingFactor * 1.0)));
+                _fileControlRecord.EntryAddendaCount = _runningStatObject.AddendaEntryCount;
+                _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
+                _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
+                _fileControlRecord.TotalCreditEntryDollarAmount = _runningStatObject.TotalCreditEntryDollarAmount;
 
-            _writer.Write(_fileControlRecord);
+                _writer.Write(_fileControlRecord);
+            }
         }
 
         private void WriteFileControlFillerRecords()

@@ -38,11 +38,34 @@ namespace ChoETL.NACHATest
             //config.TurnOffOriginatingCompanyIdValidation = true;
             config.ErrorMode = ChoErrorMode.ThrowAndStop;
             //config.BlockingFactor = 20;
+
+            //var nachaWriter1 = new ChoNACHAWriter(@"ACH1.txt", config);
+            //var nachaWriter2 = new ChoNACHAWriter(@"ACH2.txt", config);
+
+            ChoActivator.Factory = (t, args) =>
+            {
+                if (t == typeof(ChoNACHAFileHeaderRecord))
+                {
+                    var header = new ChoNACHAFileHeaderRecord();
+                    header.Initialize();
+
+                    //Overrride any values here...
+                    header.FileCreationDate = DateTime.Today.AddDays(100);
+                    return header;
+                }
+                return null;
+            };
+
             using (var nachaWriter = new ChoNACHAWriter(@"ACH.txt", config)
                 )
             {
                 nachaWriter.Configuration.ErrorMode = ChoErrorMode.IgnoreAndContinue;
-
+                //nachaWriter.WriterHandle.BeforeRecordWrite += (o, e) =>
+                //{
+                //    var rec = e.Record as ChoNACHAFileHeaderRecord;
+                //    if (rec != null)
+                //        rec.FileCreationDate = DateTime.Today.AddDays(100);
+                //};
                 using (var bw1 = nachaWriter.CreateBatch(200, companyName: "JR PROCUREMENT"))
                 {
                     //using (var entry1 = bw1.CreateDebitEntryDetail(22, "123456789", "1313131313", 22.505M, null, "ID Name", "Desc Data"))
