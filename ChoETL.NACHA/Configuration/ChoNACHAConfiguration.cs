@@ -68,6 +68,7 @@ namespace ChoETL.NACHA
         public string ReferenceCode { get; set; }
         public uint BatchNumber { get; set; }
         public Func<uint> BatchNumberGenerator { get; set; }
+        public ChoEntryDetailTraceSource EntryDetailTraceSource { get; set; }
 
         public ChoNACHAConfiguration()
         {

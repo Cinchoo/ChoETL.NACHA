@@ -15,4 +15,10 @@ namespace ChoETL.NACHA
         BatchControl = 8,
         FileControl = 9
     }
+
+    public enum ChoEntryDetailTraceSource
+    {
+        DestinationBankRoutingNumber = 0,
+        OriginatingDFI = 1
+    }
 }
