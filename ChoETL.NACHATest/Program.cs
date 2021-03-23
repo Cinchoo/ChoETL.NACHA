@@ -1,6 +1,7 @@
 ﻿using ChoETL.NACHA;
 using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -12,14 +13,67 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
-            ChoETLFrxBootstrap.TraceLevel = System.Diagnostics.TraceLevel.Verbose;
-            ReadNWriteACHFile();
+            //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("fa-IR");
+
+            //var x = new ChoDateTimeConverter();
+            //var c = x.Convert("121015", typeof(DateTime), "yyMMdd", new CultureInfo("hi-IN"));
+            //Console.WriteLine(c);
+            //return;
+
+            ChoETLFrxBootstrap.TraceLevel = System.Diagnostics.TraceLevel.Off;
+            ReadACHFile();
+            Console.ReadLine();
+        }
+
+        private static void ReadACHFile()
+        {
+            using (ChoNACHAReader fr = new ChoNACHAReader("20151027B0000327P018CHK.ACH", new ChoNACHAConfiguration() { FieldValueTrimOption = ChoFieldValueTrimOption.None }))
+            {
+                foreach (var r in fr)
+                {
+                    Console.WriteLine(r.ToStringEx());
+
+                    if (r.ToString() == "ChoETL.NACHA.ChoNACHAEntryDetailRecord")
+                    {
+                        ChoNACHAEntryDetailRecord detail = (ChoNACHAEntryDetailRecord)r;
+                        Console.WriteLine(detail.IndividualName.Length);
+                    }
+                }
+            }
+
+            //Console.WriteLine(r.ToStringEx());
         }
 
         private static void ReadNWriteACHFile()
         {
-            using (ChoNACHAReader r = new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
-                Console.WriteLine(r.ToStringEx());
+            //using (ChoNACHAReader r = new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
+            //    Console.WriteLine(r.ToStringEx());
+            //return;
+
+            for (int i = 0; i < 3; i++)
+            {
+                var t = Task.Run(() =>
+                {
+                    System.Threading.Thread.Sleep(100);
+                    try
+                    {
+                        using (ChoNACHAReader r = new ChoNACHAReader("20151027B0000327P018CHK_" + i + ".ACH"))
+                        {
+                            foreach (var rec in r)
+                            {
+                                //Console.WriteLine(rec.ToStringEx());
+                            }
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.WriteLine(ex.Message);
+                    }
+
+                });
+            }
+            return;
+
 
             ChoNACHAConfiguration config = new ChoNACHAConfiguration();
             config.DestinationBankRoutingNumber = "123456789";
@@ -48,6 +102,7 @@ namespace ChoETL.NACHATest
                 }
             }
         }
+
         static void WriteACHFile1()
         {
             using (ChoNACHAReader fr = new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
@@ -59,11 +114,11 @@ namespace ChoETL.NACHATest
 
                     using (var bw1 = nachaWriter.CreateBatch(200))
                     {
-                        using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                        using (var entry1 = bw1.CreateDebitEntryDetail(20, "123456789", "1313131313", 22.505M, "", "ID Name", "Desc Data"))
                         {
                             entry1.CreateAddendaRecord("Monthly bill");
                         }
-                        using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "ID Number", "ID Name", "Desc Data"))
+                        using (var entry2 = bw1.CreateCreditEntryDetail(20, "123456789", "1313131313", 22.505M, "", "ID Name", "Desc Data"))
                         {
 
                         }
@@ -75,7 +130,7 @@ namespace ChoETL.NACHATest
             }
 
         }
-        
+
         static void WriteACHFile()
         {
             ChoETLFrxBootstrap.TraceLevel = System.Diagnostics.TraceLevel.Verbose;

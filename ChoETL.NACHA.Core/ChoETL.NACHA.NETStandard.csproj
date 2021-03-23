@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>1.0.2.0</Version>
+    <Version>1.0.2.2</Version>
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Cinchoo</Authors>
     <Company>Cinchoo Inc.</Company>
@@ -44,7 +44,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="ChoETL.NETStandard" Version="1.2.1.1" />
+    <PackageReference Include="ChoETL.NETStandard" Version="1.2.1.12" />
   </ItemGroup>
 
 </Project>
