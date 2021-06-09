@@ -24,34 +24,27 @@ using ChoETL.NACHA;
 ```
 # How to use
 
-To read NACHA file
+To read NACHA file (using c# 7, otherwise use if-else statement)
 
 ``` csharp
 foreach (var r in new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
 {
-    switch (r.GetType())
+    switch (r)
     {
-        case var type when type == typeof(ChoNACHAFileHeaderRecord):
-            var fileHeaderRecord = r as ChoNACHAFileHeaderRecord;
+        case ChoNACHAFileHeaderRecord fileHeaderRecord:
             Console.WriteLine(fileHeaderRecord.ImmediateOrigin);
             break;
-        case var type when type == typeof(ChoNACHAFileControlRecord):
-            var fileControlRecord = r as ChoNACHAFileControlRecord;
+        case ChoNACHAFileControlRecord fileControlRecord:
             Console.WriteLine(fileControlRecord.BatchCount);
             break;
-        case var type when type == typeof(ChoNACHABatchHeaderRecord):
-            var batchHeaderRecord = r as ChoNACHABatchHeaderRecord;
+        case ChoNACHABatchHeaderRecord batchHeaderRecord:
             Console.WriteLine(batchHeaderRecord.BatchNumber);
             break;
-        case var type when type == typeof(ChoNACHABatchControlRecord):
-            var batchControlRecord = r as ChoNACHABatchControlRecord;
+        case ChoNACHABatchControlRecord batchControlRecord:
             Console.WriteLine(batchControlRecord.BatchNumber);
             break;
-        case var type when type == typeof(ChoNACHAEntryDetailRecord):
-            var entryDetailRecord = r as ChoNACHAEntryDetailRecord;
+        case ChoNACHAEntryDetailRecord entryDetailRecord:
             Console.WriteLine(entryDetailRecord.DFIAccountNumber);
-            break;
-        default:
             break;
     }
 }
