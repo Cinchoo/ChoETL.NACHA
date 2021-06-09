@@ -28,7 +28,33 @@ To read NACHA file
 
 ``` csharp
 foreach (var r in new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
-	Console.WriteLine(r.ToStringEx());
+{
+    switch (r.GetType())
+    {
+        case var type when type == typeof(ChoNACHAFileHeaderRecord):
+            var fileHeaderRecord = r as ChoNACHAFileHeaderRecord;
+            Console.WriteLine(fileHeaderRecord.ImmediateOrigin);
+            break;
+        case var type when type == typeof(ChoNACHAFileControlRecord):
+            var fileControlRecord = r as ChoNACHAFileControlRecord;
+            Console.WriteLine(fileControlRecord.BatchCount);
+            break;
+        case var type when type == typeof(ChoNACHABatchHeaderRecord):
+            var batchHeaderRecord = r as ChoNACHABatchHeaderRecord;
+            Console.WriteLine(batchHeaderRecord.BatchNumber);
+            break;
+        case var type when type == typeof(ChoNACHABatchControlRecord):
+            var batchControlRecord = r as ChoNACHABatchControlRecord;
+            Console.WriteLine(batchControlRecord.BatchNumber);
+            break;
+        case var type when type == typeof(ChoNACHAEntryDetailRecord):
+            var entryDetailRecord = r as ChoNACHAEntryDetailRecord;
+            Console.WriteLine(entryDetailRecord.DFIAccountNumber);
+            break;
+        default:
+            break;
+    }
+}
 ```
 
 To write NACHA file
