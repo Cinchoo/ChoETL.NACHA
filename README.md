@@ -7,7 +7,7 @@ This simple, nifty library exposes the .NET classes to read and process the NACH
 
 ## Install
 
-To install Cinchoo PGP, run the following command in the Package Manager Console
+To install Cinchoo ETL - NACHA Library, run the following command in the Package Manager Console
 
 ##### .NET Framework [![NuGet](https://img.shields.io/nuget/v/ChoETL.NACHA.svg)](https://www.nuget.org/packages/ChoETL.NACHA/)
 
