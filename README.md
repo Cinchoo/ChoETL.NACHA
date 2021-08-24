@@ -7,7 +7,7 @@ This simple, nifty library exposes the .NET classes to read and process the NACH
 
 ## Install
 
-To install Cinchoo PGP, run the following command in the Package Manager Console
+To install Cinchoo ETL - NACHA Library, run the following command in the Package Manager Console
 
 ##### .NET Framework [![NuGet](https://img.shields.io/nuget/v/ChoETL.NACHA.svg)](https://www.nuget.org/packages/ChoETL.NACHA/)
 
@@ -24,11 +24,30 @@ using ChoETL.NACHA;
 ```
 # How to use
 
-To read NACHA file
+To read NACHA file (using c# 7, otherwise use if-else statement)
 
 ``` csharp
 foreach (var r in new ChoNACHAReader("20151027B0000327P018CHK.ACH"))
-	Console.WriteLine(r.ToStringEx());
+{
+    switch (r)
+    {
+        case ChoNACHAFileHeaderRecord fileHeaderRecord:
+            Console.WriteLine(fileHeaderRecord.ImmediateOrigin);
+            break;
+        case ChoNACHAFileControlRecord fileControlRecord:
+            Console.WriteLine(fileControlRecord.BatchCount);
+            break;
+        case ChoNACHABatchHeaderRecord batchHeaderRecord:
+            Console.WriteLine(batchHeaderRecord.BatchNumber);
+            break;
+        case ChoNACHABatchControlRecord batchControlRecord:
+            Console.WriteLine(batchControlRecord.BatchNumber);
+            break;
+        case ChoNACHAEntryDetailRecord entryDetailRecord:
+            Console.WriteLine(entryDetailRecord.DFIAccountNumber);
+            break;
+    }
+}
 ```
 
 To write NACHA file

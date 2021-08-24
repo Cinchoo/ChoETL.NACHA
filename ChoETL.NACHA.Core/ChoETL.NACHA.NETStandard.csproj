@@ -15,9 +15,15 @@
     <RepositoryType>GitHub</RepositoryType>
     <PackageTags>ETL c# .NET NACHA</PackageTags>
     <PackageReleaseNotes>.NET Standard version</PackageReleaseNotes>
-    <SignAssembly>true</SignAssembly>
-    <AssemblyOriginatorKeyFile>ChoETL.NACHA.Core.snk</AssemblyOriginatorKeyFile>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
   </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+  </ItemGroup>
+
 
   <ItemGroup>
     <Compile Include="..\ChoETL.NACHA\ChoNACHABatchWriter.cs" Link="ChoNACHABatchWriter.cs" />
