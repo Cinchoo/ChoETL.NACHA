@@ -13,6 +13,7 @@ namespace ChoETL.NACHATest
     {
         static void Main(string[] args)
         {
+            WriteACHFile1();
             //CultureInfo.DefaultThreadCurrentCulture = new CultureInfo("fa-IR");
 
             //var x = new ChoDateTimeConverter();
@@ -31,15 +32,62 @@ namespace ChoETL.NACHATest
             {
                 foreach (var r in fr)
                 {
-                    Console.WriteLine(r.ToStringEx());
-
-                    if (r.ToString() == "ChoETL.NACHA.ChoNACHAEntryDetailRecord")
+                    switch (r)
                     {
-                        ChoNACHAEntryDetailRecord detail = (ChoNACHAEntryDetailRecord)r;
-                        Console.WriteLine(detail.IndividualName.Length);
+                        case ChoNACHAFileHeaderRecord fileHeaderRecord:
+                            Console.WriteLine(fileHeaderRecord.ImmediateOrigin);
+                            break;
+                        case ChoNACHAFileControlRecord fileControlRecord:
+                            Console.WriteLine(fileControlRecord.BatchCount);
+                            break;
+                        case ChoNACHABatchHeaderRecord batchHeaderRecord:
+                            Console.WriteLine(batchHeaderRecord.BatchNumber);
+                            break;
+                        case ChoNACHABatchControlRecord batchControlRecord:
+                            Console.WriteLine(batchControlRecord.BatchNumber);
+                            break;
+                        case ChoNACHAEntryDetailRecord entryDetailRecord:
+                            Console.WriteLine(entryDetailRecord.DFIAccountNumber);
+                            break;
+
+
                     }
+
+                    //switch (r.GetType())
+                    //{
+                    //    case var type when type == typeof(ChoNACHAFileHeaderRecord):
+                    //        var fileHeaderRecord = r as ChoNACHAFileHeaderRecord;
+                    //        Console.WriteLine(fileHeaderRecord.ImmediateOrigin);
+                    //        break;
+                    //    case var type when type == typeof(ChoNACHAFileControlRecord):
+                    //        var fileControlRecord = r as ChoNACHAFileControlRecord;
+                    //        Console.WriteLine(fileControlRecord.BatchCount);
+                    //        break;
+                    //    case var type when type == typeof(ChoNACHABatchHeaderRecord):
+                    //        var batchHeaderRecord = r as ChoNACHABatchHeaderRecord;
+                    //        Console.WriteLine(batchHeaderRecord.BatchNumber);
+                    //        break;
+                    //    case var type when type == typeof(ChoNACHABatchControlRecord):
+                    //        var batchControlRecord = r as ChoNACHABatchControlRecord;
+                    //        Console.WriteLine(batchControlRecord.BatchNumber);
+                    //        break;
+                    //    case var type when type == typeof(ChoNACHAEntryDetailRecord):
+                    //        var entryDetailRecord = r as ChoNACHAEntryDetailRecord;
+                    //        Console.WriteLine(entryDetailRecord.DFIAccountNumber);
+                    //        break;
+                    //    default:
+                    //        break;
+                    //}
                 }
             }
+
+            //Console.WriteLine(r.ToStringEx());
+
+            //if (r.ToString() == "ChoETL.NACHA.ChoNACHAEntryDetailRecord")
+            //{
+            //    ChoNACHAEntryDetailRecord detail = (ChoNACHAEntryDetailRecord)r;
+            //    Console.WriteLine(detail.IndividualName.Length);
+            //}
 
             //Console.WriteLine(r.ToStringEx());
         }
