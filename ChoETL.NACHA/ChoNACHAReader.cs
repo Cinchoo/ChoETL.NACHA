@@ -91,12 +91,20 @@ namespace ChoETL.NACHA
         {
             ChoManifoldReader reader = new ChoManifoldReader(_textReader, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
                typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
+            reader.AfterRecordConfigurationConstruct += Reader_AfterRecordConfigurationConstruct;
             reader.TraceSwitch = TraceSwitch;
             reader.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
             object state = null;
             return ChoNACHAEnumeratorWrapper.BuildEnumerable<object>(() => (state = reader.Read()) != null, () => state).GetEnumerator();
         }
 
+        private void Reader_AfterRecordConfigurationConstruct(object sender, ChoRecordConfigurationConstructArgs e)
+        {
+            if (e.Configuration != null && e.Configuration is ChoFileRecordConfiguration)
+            {
+                ((ChoFileRecordConfiguration)e.Configuration).FieldValueTrimOption = Configuration.FieldValueTrimOption;
+            }
+        }
 
         public static ChoNACHAReader LoadText(string inputText, Encoding encoding = null, ChoNACHAConfiguration configuration = null, TraceSwitch traceSwitch = null)
         {

@@ -30,9 +30,15 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+  </PropertyGroup>
+  <PropertyGroup>
+    <AssemblyOriginatorKeyFile>ChoETL.NACHA.snk</AssemblyOriginatorKeyFile>
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="ChoETL, Version=1.2.0.9, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ChoETL.1.2.0.9\lib\net45\ChoETL.dll</HintPath>
+    <Reference Include="ChoETL, Version=1.2.1.13, Culture=neutral, PublicKeyToken=8138733ed69d3172, processorArchitecture=MSIL">
+      <HintPath>..\packages\ChoETL.1.2.1.13\lib\net45\ChoETL.dll</HintPath>
     </Reference>
     <Reference Include="PresentationFramework" />
     <Reference Include="System" />
@@ -68,6 +74,7 @@
     <Compile Include="Shared\ChoNACHARunningStat.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ChoETL.NACHA.snk" />
     <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

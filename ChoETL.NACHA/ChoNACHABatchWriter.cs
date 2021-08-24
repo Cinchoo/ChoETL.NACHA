@@ -79,7 +79,8 @@ namespace ChoETL.NACHA
             entry.IndividualName = individualName;
             entry.DiscretionaryData = discretionaryData;
             uint tn = ++_fileRunningStatObject.TraceNumber;
-            entry.TraceNumber = _configuration.DestinationBankRoutingNumber.NTrim().First(8) + tn.ToString().PadLeft(7, '0');
+            entry.TraceNumber = (_configuration.EntryDetailTraceSource == ChoEntryDetailTraceSource.DestinationBankRoutingNumber ? 
+                _configuration.DestinationBankRoutingNumber.NTrim().First(8) : OriginatingDFIID.NTrim().First(8)) + tn.ToString().PadLeft(7, '0');
             entry.IsDebit = isDebit;
 
             _activeEntry = entry;
