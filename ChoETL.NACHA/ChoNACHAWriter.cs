@@ -183,6 +183,7 @@ namespace ChoETL.NACHA
                 _fileControlRecord.EntryHash = _runningStatObject.EntryHash;
                 _fileControlRecord.TotalDebitEntryDollarAmount = _runningStatObject.TotalDebitEntryDollarAmount;
                 _fileControlRecord.TotalCreditEntryDollarAmount = _runningStatObject.TotalCreditEntryDollarAmount;
+                _fileControlRecord.Reserved = Configuration.Reserved;
 
                 _writer.Write(_fileControlRecord);
             }
