@@ -64,6 +64,12 @@ namespace ChoETL.NACHA
             get;
             set;
         }
+        
+        public string Reserved
+        {
+            get;
+            set;
+        }
 
         public string ReferenceCode { get; set; }
         public uint BatchNumber { get; set; }
