@@ -42,6 +42,7 @@
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAEntryDetailRecord.cs" Link="Records\ChoNACHAEntryDetailRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileControlRecord.cs" Link="Records\ChoNACHAFileControlRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileHeaderRecord.cs" Link="Records\ChoNACHAFileHeaderRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAReturnAddendaRecord.cs" Link="Records\ChoNACHAReturnAddendaRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Shared\ChoImmediateOriginValidatorAttribute.cs" Link="Shared\ChoImmediateOriginValidatorAttribute.cs" />
     <Compile Include="..\ChoETL.NACHA\Shared\ChoNACHARunningStat.cs" Link="Shared\ChoNACHARunningStat.cs" />
   </ItemGroup>
@@ -50,7 +51,6 @@
     <Folder Include="Configuration\" />
     <Folder Include="Exceptions\" />
     <Folder Include="Shared\" />
-    <Folder Include="Records\" />
   </ItemGroup>
 
   <ItemGroup>
