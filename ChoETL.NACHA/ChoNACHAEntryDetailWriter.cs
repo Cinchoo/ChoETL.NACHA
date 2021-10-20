@@ -61,7 +61,7 @@ namespace ChoETL.NACHA
             _writer.Write(addendaRecord);
         }
 
-        public void CreateReturnAddendaRecord(string returnReasonCode, string originalEntryTraceNumber, string OriginalReceivingDFIIdentification, string AddendaInformation = null, string DateOfDeath = null, uint addendaTypeCode = 5)
+        public void CreateReturnAddendaRecord(string returnReasonCode, string originalEntryTraceNumber, string OriginalReceivingDFIIdentification, string AddendaInformation = null, string DateOfDeath = null, uint addendaTypeCode = 99)
         {
             CheckDisposed();
 
