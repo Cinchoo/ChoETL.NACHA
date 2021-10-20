@@ -1,9 +1,9 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
 
     <TargetFramework>netcoreapp2.1</TargetFramework>
-    <Version>1.0.2.2</Version>
+    <Version>1.0.2.3</Version>
 
     <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
     <Authors>Cinchoo</Authors>
@@ -42,6 +42,7 @@
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAEntryDetailRecord.cs" Link="Records\ChoNACHAEntryDetailRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileControlRecord.cs" Link="Records\ChoNACHAFileControlRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAFileHeaderRecord.cs" Link="Records\ChoNACHAFileHeaderRecord.cs" />
+    <Compile Include="..\ChoETL.NACHA\Records\ChoNACHAReturnAddendaRecord.cs" Link="Records\ChoNACHAReturnAddendaRecord.cs" />
     <Compile Include="..\ChoETL.NACHA\Shared\ChoImmediateOriginValidatorAttribute.cs" Link="Shared\ChoImmediateOriginValidatorAttribute.cs" />
     <Compile Include="..\ChoETL.NACHA\Shared\ChoNACHARunningStat.cs" Link="Shared\ChoNACHARunningStat.cs" />
   </ItemGroup>
