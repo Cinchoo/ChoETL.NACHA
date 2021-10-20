@@ -77,7 +77,7 @@ namespace ChoETL.NACHA
         private void Init()
         {
             _writer = new ChoManifoldWriter(_textWriter, Configuration as ChoManifoldRecordConfiguration).WithRecordSelector(0, 1, typeof(ChoNACHABatchHeaderRecord), typeof(ChoNACHABatchControlRecord),
-               typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord));
+               typeof(ChoNACHAFileHeaderRecord), typeof(ChoNACHAFileControlRecord), typeof(ChoNACHAEntryDetailRecord), typeof(ChoNACHAAddendaRecord), typeof(ChoNACHAReturnAddendaRecord));
             _writer.Configuration.ObjectValidationMode = ChoObjectValidationMode.ObjectLevel;
 
             _headerInitializer = new Lazy<object>(() =>

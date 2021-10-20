@@ -59,6 +59,27 @@ namespace ChoETL.NACHA
             _batchRunningStatObject.UpdateStat(addendaRecord);
 
             _writer.Write(addendaRecord);
+        }
+
+        public void CreateReturnAddendaRecord(string returnReasonCode, string originalEntryTraceNumber, string OriginalReceivingDFIIdentification, string AddendaInformation = null, string DateOfDeath = null, uint addendaTypeCode = 99)
+        {
+            CheckDisposed();
+
+            _NACHAEntryDetailRecord.AddendaRecordIndicator = true;
+
+            var x = _entryDetailWriter.Value;
+
+            ChoNACHAReturnAddendaRecord addendaRecord = ChoActivator.CreateInstanceAndInit<ChoNACHAReturnAddendaRecord>();
+            addendaRecord.AddendaTypeCode = addendaTypeCode;
+            addendaRecord.ReturnReasonCode = returnReasonCode;
+            addendaRecord.OriginalEntryTraceNumber = originalEntryTraceNumber;
+            addendaRecord.DateOfDeath = DateOfDeath;
+            addendaRecord.OriginalReceivingDFIIdentification = OriginalReceivingDFIIdentification;
+            addendaRecord.AddendaInformation = AddendaInformation;
+            addendaRecord.EntryDetailSequenceNumber = ulong.Parse(TraceNumber.ToString());
+            _batchRunningStatObject.UpdateStat(addendaRecord);
+
+            _writer.Write(addendaRecord);
 
         }
 

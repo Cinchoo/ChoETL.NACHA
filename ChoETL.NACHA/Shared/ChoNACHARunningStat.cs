@@ -52,6 +52,11 @@ namespace ChoETL.NACHA
             IncRecordCountBy(1);
             IncAddendaRecordCountBy(1);
         }
+        public void UpdateStat(ChoNACHAReturnAddendaRecord record)
+        {
+            IncRecordCountBy(1);
+            IncAddendaRecordCountBy(1);
+        }
 
         public void UpdateStat(ChoNACHARunningStat src)
         {
