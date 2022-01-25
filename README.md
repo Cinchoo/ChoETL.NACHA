@@ -78,6 +78,28 @@ using (var nachaWriter = new ChoNACHAWriter("ACH.txt", config))
 	}
 }
 ```
+# ChoNACHAConfiguration 
+Here are the NACHA configuration available to configure while reading / writing NACHA files using Cinchoo NACHA.
+
+- FieldValueTrimOption - Option to trim the values while parsing. Possible values are None, TrimStart, TrimEnd, Trim.
+- PriorityCode - The lower the number, the higher processing priority. Currently, only 01 is used
+- DestinationBankRoutingNumber - Number that identifies the bank site where it process the files.
+- TurnOffDestinationBankRoutingNumber
+- OriginatingCompanyId - is a number that identifyies entities, called originators, collecting payments.
+- TurnOffOriginatingCompanyIdValidation
+- FileIDModifier - Unique file identifier. Code to distinguish among multiple input files.
+- BlockingFactor - a non-zero value, the NACHAWriter will generate the file with FileControl FILLER records in the last incomplete block.
+- FormatCode - Currently there is only one code. Enter 1.
+- DestinationBankName - Destination bank name.
+- OriginatingCompanyName - Originating bank name.
+- Reserved - reserved character used to File Trailer Record's (Type 9) Reserved field.
+- ReferenceCode - Optional field you may use to describe input file for internal accounting purposes.
+- BatchNumber - Number batches sequentially.
+- BatchNumberGenerator - Custom batch number generator.
+- EntryDetailTraceSource - Source of TraceNumber in Entry Detail Record (DestinationBankRoutingNumber/OriginatingDFI) 
+
+
+More about Cinchoo NACHA library, visit [CodeProject](https://www.codeproject.com/Articles/1170069/Cinchoo-NACHA) Article
 
 If this project help you reduce time to develop, you can give me a cup of coffee :)
 
